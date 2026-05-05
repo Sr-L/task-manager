@@ -6,6 +6,7 @@ import { swaggerSpec } from '../docs/swagger.js';
 import { MongoUserRepository } from './contexts/auth/infrastructure/mongo.user.repository.js';
 import { MongoTaskRepository } from './contexts/tasks/infrastructure/mongo.task.repository.js';
 import { JwtService } from './contexts/auth/infrastructure/jwt.service.js';
+import { BcryptPasswordHasher } from './contexts/auth/infrastructure/bcrypt.password.hasher.js';
 import { RegisterUserUseCase } from './contexts/auth/application/register.user.use-case.js';
 import { LoginUserUseCase } from './contexts/auth/application/login.user.use-case.js';
 import { CreateTaskUseCase } from './contexts/tasks/application/create.task.use-case.js';
@@ -39,10 +40,11 @@ export function createApp() {
 
   // Services
   const jwtService = new JwtService();
+  const passwordHasher = new BcryptPasswordHasher();
 
   // Use cases
-  const registerUseCase = new RegisterUserUseCase(userRepository);
-  const loginUseCase = new LoginUserUseCase(userRepository, jwtService);
+  const registerUseCase = new RegisterUserUseCase(userRepository, passwordHasher);
+  const loginUseCase = new LoginUserUseCase(userRepository, jwtService, passwordHasher);
   const createTaskUseCase = new CreateTaskUseCase(taskRepository);
   const listTasksUseCase = new ListTasksUseCase(taskRepository);
   const completeTaskUseCase = new CompleteTaskUseCase(taskRepository);

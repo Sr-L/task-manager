@@ -3,6 +3,7 @@ import { RegisterUserUseCase } from '../../../src/contexts/auth/application/regi
 
 describe('RegisterUserUseCase', () => {
   let userRepository;
+  let passwordHasher;
   let useCase;
 
   beforeEach(() => {
@@ -10,7 +11,11 @@ describe('RegisterUserUseCase', () => {
       findByEmail: jest.fn(),
       save: jest.fn(),
     };
-    useCase = new RegisterUserUseCase(userRepository);
+    passwordHasher = {
+      hash: jest.fn().mockResolvedValue('hashed-password'),
+      compare: jest.fn(),
+    };
+    useCase = new RegisterUserUseCase(userRepository, passwordHasher);
   });
 
   it('should register a user with valid data', async () => {
@@ -44,9 +49,9 @@ describe('RegisterUserUseCase', () => {
 
     await useCase.execute({ name: 'Luis', email: 'luis@test.com', password: 'secret123' });
 
+    expect(passwordHasher.hash).toHaveBeenCalledWith('secret123');
     const savedUser = userRepository.save.mock.calls[0][0];
-    expect(savedUser.password).not.toBe('secret123');
-    expect(savedUser.password).toMatch(/^\$2[aby]\$/);
+    expect(savedUser.password).toBe('hashed-password');
   });
 
   it('should reject passwords shorter than 6 characters', async () => {
