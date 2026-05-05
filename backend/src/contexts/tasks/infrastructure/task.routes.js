@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createTaskValidators } from './task.validators.js';
+import { createTaskValidators, taskIdParamValidators } from './task.validators.js';
 import { validateRequest } from '../../../shared/middlewares/validate.request.js';
 
 export function createTaskRouter(taskController, authMiddleware) {
@@ -90,7 +90,7 @@ export function createTaskRouter(taskController, authMiddleware) {
    *       404:
    *         description: Task not found
    */
-  router.patch('/:id/complete', taskController.complete);
+  router.patch('/:id/complete', taskIdParamValidators, validateRequest, taskController.complete);
 
   /**
    * @swagger
@@ -116,7 +116,7 @@ export function createTaskRouter(taskController, authMiddleware) {
    *       404:
    *         description: Task not found
    */
-  router.delete('/:id', taskController.delete);
+  router.delete('/:id', taskIdParamValidators, validateRequest, taskController.delete);
 
   return router;
 }

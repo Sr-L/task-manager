@@ -2,11 +2,12 @@ import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import request from 'supertest';
 import express from 'express';
 import { Router } from 'express';
-import { createTaskValidators } from '../../../src/contexts/tasks/infrastructure/task.validators.js';
+import { createTaskValidators, taskIdParamValidators } from '../../../src/contexts/tasks/infrastructure/task.validators.js';
 import { validateRequest } from '../../../src/shared/middlewares/validate.request.js';
 import { errorHandler } from '../../../src/shared/middlewares/error.handler.js';
 
 const VALID_TOKEN = 'Bearer valid-token';
+const VALID_ID = '507f1f77bcf86cd799439011';
 
 // Stub authMiddleware: injects req.user without real JWT
 function stubAuth(req, _res, next) {
@@ -22,8 +23,8 @@ function buildApp(taskController) {
   router.use(stubAuth);
   router.get('/', taskController.list);
   router.post('/', createTaskValidators, validateRequest, taskController.create);
-  router.patch('/:id/complete', taskController.complete);
-  router.delete('/:id', taskController.delete);
+  router.patch('/:id/complete', taskIdParamValidators, validateRequest, taskController.complete);
+  router.delete('/:id', taskIdParamValidators, validateRequest, taskController.delete);
 
   app.use('/api/v1/tasks', router);
   app.use(errorHandler);
@@ -75,7 +76,7 @@ describe('TaskController', () => {
   it('PATCH /tasks/:id/complete - should complete a task', async () => {
     const app = buildApp(taskController);
     const res = await request(app)
-      .patch('/api/v1/tasks/abc123/complete')
+      .patch(`/api/v1/tasks/${VALID_ID}/complete`)
       .set('Authorization', VALID_TOKEN);
 
     expect(res.status).toBe(200);
@@ -85,7 +86,7 @@ describe('TaskController', () => {
   it('DELETE /tasks/:id - should delete a task', async () => {
     const app = buildApp(taskController);
     const res = await request(app)
-      .delete('/api/v1/tasks/abc123')
+      .delete(`/api/v1/tasks/${VALID_ID}`)
       .set('Authorization', VALID_TOKEN);
 
     expect(res.status).toBe(200);
@@ -100,10 +101,30 @@ describe('TaskController', () => {
     });
     const app = buildApp(taskController);
     const res = await request(app)
-      .patch('/api/v1/tasks/nonexistent/complete')
+      .patch(`/api/v1/tasks/${VALID_ID}/complete`)
       .set('Authorization', VALID_TOKEN);
 
     expect(res.status).toBe(404);
     expect(res.body.success).toBe(false);
+  });
+
+  it('PATCH /tasks/:id/complete - should return 422 on malformed id', async () => {
+    const app = buildApp(taskController);
+    const res = await request(app)
+      .patch('/api/v1/tasks/not-an-id/complete')
+      .set('Authorization', VALID_TOKEN);
+
+    expect(res.status).toBe(422);
+    expect(taskController.complete).not.toHaveBeenCalled();
+  });
+
+  it('DELETE /tasks/:id - should return 422 on malformed id', async () => {
+    const app = buildApp(taskController);
+    const res = await request(app)
+      .delete('/api/v1/tasks/not-an-id')
+      .set('Authorization', VALID_TOKEN);
+
+    expect(res.status).toBe(422);
+    expect(taskController.delete).not.toHaveBeenCalled();
   });
 });
