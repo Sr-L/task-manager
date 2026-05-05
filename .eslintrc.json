@@ -1,0 +1,18 @@
+{
+  "env": {
+    "es2022": true,
+    "node": true
+  },
+  "extends": ["eslint:recommended", "plugin:node/recommended", "prettier"],
+  "plugins": ["node"],
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module"
+  },
+  "rules": {
+    "no-console": "off",
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "node/no-unsupported-features/es-syntax": ["error", { "version": ">=18.0.0", "ignores": ["modules"] }],
+    "node/no-missing-import": "off"
+  }
+}
