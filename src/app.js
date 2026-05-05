@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from '../docs/swagger.js';
 
 import { MongoUserRepository } from './contexts/auth/infrastructure/mongo.user.repository.js';
 import { MongoTaskRepository } from './contexts/tasks/infrastructure/mongo.task.repository.js';
@@ -22,6 +24,9 @@ export function createApp() {
 
   app.use(cors());
   app.use(express.json());
+
+  // Swagger UI
+  app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
   // Health check
   app.get('/health', (_req, res) => {
