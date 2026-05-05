@@ -35,3 +35,15 @@ export class WeakPasswordError extends DomainError {
     super(message, 400);
   }
 }
+
+export class InvalidEmailError extends DomainError {
+  constructor(message = 'Invalid email format') {
+    super(message, 400);
+  }
+}
+
+export class EmptyTaskTitleError extends DomainError {
+  constructor(message = 'Task title cannot be empty') {
+    super(message, 400);
+  }
+}
