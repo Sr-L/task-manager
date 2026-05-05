@@ -1,5 +1,6 @@
 import { UserModel } from './user.model.js';
 import { UserEntity } from '../domain/user.entity.js';
+import { UserRepository } from '../domain/user.repository.js';
 
 function toEntity(doc) {
   return new UserEntity({
@@ -10,7 +11,7 @@ function toEntity(doc) {
   });
 }
 
-export class MongoUserRepository {
+export class MongoUserRepository extends UserRepository {
   async findByEmail(email) {
     const doc = await UserModel.findOne({ email });
     return doc ? toEntity(doc) : null;

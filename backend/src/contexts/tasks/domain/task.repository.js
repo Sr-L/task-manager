@@ -1,18 +1,22 @@
-/**
- * Task repository contract.
- *
- * @typedef {Object} TaskRepository
- * @property {(task: TaskEntity) => Promise<TaskEntity>} save
- * @property {(userId: string) => Promise<TaskEntity[]>} findByUserId
- * @property {(id: string) => Promise<TaskEntity|null>} findById
- * @property {(id: string) => Promise<TaskEntity>} markCompleted
- * @property {(id: string) => Promise<void>} delete
- */
+export class TaskRepository {
 
-export const TaskRepository = {
-  save: async (_task) => { throw new Error('Not implemented'); },
-  findByUserId: async (_userId) => { throw new Error('Not implemented'); },
-  findById: async (_id) => { throw new Error('Not implemented'); },
-  markCompleted: async (_id) => { throw new Error('Not implemented'); },
-  delete: async (_id) => { throw new Error('Not implemented'); },
-};
+  async save(_task) {
+    throw new Error('TaskRepository.save not implemented');
+  }
+
+  async findByUserId(_userId) {
+    throw new Error('TaskRepository.findByUserId not implemented');
+  }
+
+  async findById(_id) {
+    throw new Error('TaskRepository.findById not implemented');
+  }
+
+  async markCompleted(_id, _userId) {
+    throw new Error('TaskRepository.markCompleted not implemented');
+  }
+
+  async delete(_id, _userId) {
+    throw new Error('TaskRepository.delete not implemented');
+  }
+}

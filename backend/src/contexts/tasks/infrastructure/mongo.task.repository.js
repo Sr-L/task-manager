@@ -1,5 +1,6 @@
 import { TaskModel } from './task.model.js';
 import { TaskEntity } from '../domain/task.entity.js';
+import { TaskRepository } from '../domain/task.repository.js';
 
 function toEntity(doc) {
   return new TaskEntity({
@@ -14,7 +15,7 @@ function toEntity(doc) {
   });
 }
 
-export class MongoTaskRepository {
+export class MongoTaskRepository extends TaskRepository{
   async save(task) {
     const doc = await TaskModel.create({
       title: task.title,
