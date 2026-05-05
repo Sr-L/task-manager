@@ -6,18 +6,18 @@ describe('UserEntity', () => {
     id: '1',
     name: 'Luis',
     email: 'luis@test.com',
-    password: 'hash',
     createdAt: new Date(),
   };
 
   it('builds with valid data', () => {
     const user = new UserEntity(valid);
     expect(user.email).toBe('luis@test.com');
+    expect(user.name).toBe('Luis');
   });
 
-  it('toPublic strips the password hash', () => {
-    const user = new UserEntity(valid);
-    expect(user.toPublic()).toEqual({ id: '1', name: 'Luis', email: 'luis@test.com' });
+  it('does not carry a password field', () => {
+    const user = new UserEntity({ ...valid, password: 'should-be-ignored' });
+    expect(user.password).toBeUndefined();
   });
 
   it.each([

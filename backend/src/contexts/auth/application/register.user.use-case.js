@@ -1,4 +1,3 @@
-import { UserEntity } from '../domain/user.entity.js';
 import { ConflictError, WeakPasswordError } from '../../../shared/domain/domain.error.js';
 
 export class RegisterUserUseCase {
@@ -13,8 +12,7 @@ export class RegisterUserUseCase {
     const existing = await this.userRepository.findByEmail(email);
     if (existing) throw new ConflictError('Email already in use');
 
-    const hashed = await this.passwordHasher.hash(password);
-    const user = new UserEntity({ id: null, name, email, password: hashed, createdAt: new Date() });
-    return this.userRepository.save(user);
+    const passwordHash = await this.passwordHasher.hash(password);
+    return this.userRepository.save({ name, email, passwordHash });
   }
 }

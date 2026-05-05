@@ -20,18 +20,14 @@ describe('RegisterUserUseCase', () => {
 
   it('should register a user with valid data', async () => {
     userRepository.findByEmail.mockResolvedValue(null);
-    userRepository.save.mockResolvedValue({
-      id: '123',
-      name: 'Luis',
-      email: 'luis@test.com',
-      toPublic: () => ({ id: '123', name: 'Luis', email: 'luis@test.com' }),
-    });
+    userRepository.save.mockResolvedValue({ id: '123', name: 'Luis', email: 'luis@test.com' });
 
     const result = await useCase.execute({ name: 'Luis', email: 'luis@test.com', password: 'secret123' });
 
     expect(userRepository.findByEmail).toHaveBeenCalledWith('luis@test.com');
     expect(userRepository.save).toHaveBeenCalledTimes(1);
     expect(result.email).toBe('luis@test.com');
+    expect(result.password).toBeUndefined();
   });
 
   it('should throw 409 when email is already in use', async () => {
@@ -43,15 +39,16 @@ describe('RegisterUserUseCase', () => {
     expect(userRepository.save).not.toHaveBeenCalled();
   });
 
-  it('should hash the password before saving', async () => {
+  it('should pass the hashed password to save (never the plain text)', async () => {
     userRepository.findByEmail.mockResolvedValue(null);
-    userRepository.save.mockImplementation((user) => Promise.resolve(user));
+    userRepository.save.mockImplementation((arg) => Promise.resolve({ id: '1', ...arg }));
 
     await useCase.execute({ name: 'Luis', email: 'luis@test.com', password: 'secret123' });
 
     expect(passwordHasher.hash).toHaveBeenCalledWith('secret123');
-    const savedUser = userRepository.save.mock.calls[0][0];
-    expect(savedUser.password).toBe('hashed-password');
+    const arg = userRepository.save.mock.calls[0][0];
+    expect(arg).toEqual({ name: 'Luis', email: 'luis@test.com', passwordHash: 'hashed-password' });
+    expect(arg.password).toBeUndefined();
   });
 
   it('should reject passwords shorter than 6 characters', async () => {

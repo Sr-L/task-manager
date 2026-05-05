@@ -8,13 +8,13 @@ export class LoginUserUseCase {
   }
 
   async execute({ email, password }) {
-    const user = await this.userRepository.findByEmail(email);
-    if (!user) throw new InvalidCredentialsError();
+    const found = await this.userRepository.findCredentialsByEmail(email);
+    if (!found) throw new InvalidCredentialsError();
 
-    const valid = await this.passwordHasher.compare(password, user.password);
+    const valid = await this.passwordHasher.compare(password, found.passwordHash);
     if (!valid) throw new InvalidCredentialsError();
 
-    const token = this.jwtService.signToken({ id: user.id, email: user.email });
-    return { token, user };
+    const token = this.jwtService.signToken({ id: found.user.id, email: found.user.email });
+    return { token, user: found.user };
   }
 }

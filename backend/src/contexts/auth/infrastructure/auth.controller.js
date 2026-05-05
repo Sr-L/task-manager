@@ -12,7 +12,7 @@ export class AuthController {
       const { name, email, password } = req.body;
       const user = await this.registerUseCase.execute({ name, email, password });
       const token = this.jwtService.signToken({ id: user.id, email: user.email });
-      successResponse(res, { token, user: user.toPublic() }, 201);
+      successResponse(res, { token, user }, 201);
     } catch (err) {
       next(err);
     }
@@ -22,7 +22,7 @@ export class AuthController {
     try {
       const { email, password } = req.body;
       const { token, user } = await this.loginUseCase.execute({ email, password });
-      successResponse(res, { token, user: user.toPublic() });
+      successResponse(res, { token, user });
     } catch (err) {
       next(err);
     }
