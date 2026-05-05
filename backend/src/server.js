@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { connectDB } from './shared/infrastructure/database/mongoose.connection.js';
+import { connectDB, syncAllIndexes } from './shared/infrastructure/database/mongoose.connection.js';
 import logger from './shared/infrastructure/logger/logger.js';
 
 import { createApp } from './app.js';
@@ -16,6 +16,7 @@ const PORT = process.env.PORT || 3000;
 async function bootstrap() {
   await connectDB();
   const app = createApp();
+  await syncAllIndexes();
   app.listen(PORT, () => {
     logger.info(`Server running on port ${PORT}`);
   });
