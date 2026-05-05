@@ -7,37 +7,33 @@ describe('CompleteTaskUseCase', () => {
 
   beforeEach(() => {
     taskRepository = {
-      findById: jest.fn(),
       markCompleted: jest.fn(),
     };
     useCase = new CompleteTaskUseCase(taskRepository);
   });
 
   it('should mark task as completed when owner requests it', async () => {
-    taskRepository.findById.mockResolvedValue({ id: '1', userId: 'u1', completed: false });
     taskRepository.markCompleted.mockResolvedValue({ id: '1', userId: 'u1', completed: true });
 
     const result = await useCase.execute({ taskId: '1', userId: 'u1' });
 
-    expect(taskRepository.markCompleted).toHaveBeenCalledWith('1');
+    expect(taskRepository.markCompleted).toHaveBeenCalledWith('1', 'u1');
     expect(result.completed).toBe(true);
   });
 
   it('should throw 404 when task does not exist', async () => {
-    taskRepository.findById.mockResolvedValue(null);
+    taskRepository.markCompleted.mockResolvedValue(null);
 
     await expect(useCase.execute({ taskId: 'nonexistent', userId: 'u1' }))
       .rejects.toMatchObject({ message: 'Task not found', status: 404 });
-
-    expect(taskRepository.markCompleted).not.toHaveBeenCalled();
   });
 
-  it('should throw 403 when task belongs to another user', async () => {
-    taskRepository.findById.mockResolvedValue({ id: '1', userId: 'u2', completed: false });
+  it('should throw 404 when task belongs to another user (no existence leak)', async () => {
+    taskRepository.markCompleted.mockResolvedValue(null);
 
     await expect(useCase.execute({ taskId: '1', userId: 'u1' }))
-      .rejects.toMatchObject({ message: 'Forbidden', status: 403 });
+      .rejects.toMatchObject({ status: 404 });
 
-    expect(taskRepository.markCompleted).not.toHaveBeenCalled();
+    expect(taskRepository.markCompleted).toHaveBeenCalledWith('1', 'u1');
   });
 });

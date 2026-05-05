@@ -37,12 +37,17 @@ export class MongoTaskRepository {
     return toEntity(doc);
   }
 
-  async markCompleted(id) {
-    const doc = await TaskModel.findByIdAndUpdate(id, { completed: true }, { new: true });
-    return toEntity(doc);
+  async markCompleted(id, userId) {
+    const doc = await TaskModel.findOneAndUpdate(
+      { _id: id, userId },
+      { completed: true },
+      { new: true }
+    );
+    return doc ? toEntity(doc) : null;
   }
 
-  async delete(id) {
-    await TaskModel.findByIdAndDelete(id);
+  async delete(id, userId) {
+    const doc = await TaskModel.findOneAndDelete({ _id: id, userId });
+    return doc !== null;
   }
 }

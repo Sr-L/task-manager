@@ -1,4 +1,4 @@
-import { NotFoundError, ForbiddenError } from '../../../shared/domain/domain.error.js';
+import { NotFoundError } from '../../../shared/domain/domain.error.js';
 
 export class CompleteTaskUseCase {
   constructor(taskRepository) {
@@ -6,10 +6,8 @@ export class CompleteTaskUseCase {
   }
 
   async execute({ taskId, userId }) {
-    const task = await this.taskRepository.findById(taskId);
+    const task = await this.taskRepository.markCompleted(taskId, userId);
     if (!task) throw new NotFoundError('Task not found');
-    if (task.userId !== userId) throw new ForbiddenError();
-
-    return this.taskRepository.markCompleted(taskId);
+    return task;
   }
 }
