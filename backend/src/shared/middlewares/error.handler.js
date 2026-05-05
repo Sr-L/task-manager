@@ -1,11 +1,29 @@
-// eslint-disable-next-line no-unused-vars
-export function errorHandler(err, req, res, _next) {
-  const status = err.status || err.statusCode || 500;
-  const message = err.message || 'Internal Server Error';
+import { DomainError } from '../domain/domain.error.js';
+import logger from '../infrastructure/logger/logger.js';
 
-  res.status(status).json({
+// eslint-disable-next-line no-unused-vars
+export function errorHandler(err, _req, res, _next) {
+  if (err instanceof DomainError) {
+    return res.status(err.status).json({
+      success: false,
+      message: err.message,
+      error: err.name,
+    });
+  }
+
+  const status = err.status || err.statusCode;
+  if (status && status < 500) {
+    return res.status(status).json({
+      success: false,
+      message: err.message,
+    });
+  }
+
+  logger.error(err);
+  const isDev = process.env.NODE_ENV === 'development';
+  res.status(status || 500).json({
     success: false,
-    message,
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+    message: isDev ? err.message : 'Internal Server Error',
+    ...(isDev && { stack: err.stack }),
   });
 }

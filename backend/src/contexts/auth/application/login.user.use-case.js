@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs';
+import { InvalidCredentialsError } from '../../../shared/domain/domain.error.js';
 
 export class LoginUserUseCase {
   constructor(userRepository, jwtService) {
@@ -8,18 +9,10 @@ export class LoginUserUseCase {
 
   async execute({ email, password }) {
     const user = await this.userRepository.findByEmail(email);
-    if (!user) {
-      const err = new Error('Invalid credentials');
-      err.status = 401;
-      throw err;
-    }
+    if (!user) throw new InvalidCredentialsError();
 
     const valid = await bcrypt.compare(password, user.password);
-    if (!valid) {
-      const err = new Error('Invalid credentials');
-      err.status = 401;
-      throw err;
-    }
+    if (!valid) throw new InvalidCredentialsError();
 
     const token = this.jwtService.signToken({ id: user.id, email: user.email });
     return { token, user };

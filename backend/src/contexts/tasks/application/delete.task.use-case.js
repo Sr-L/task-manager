@@ -1,3 +1,5 @@
+import { NotFoundError, ForbiddenError } from '../../../shared/domain/domain.error.js';
+
 export class DeleteTaskUseCase {
   constructor(taskRepository) {
     this.taskRepository = taskRepository;
@@ -5,18 +7,8 @@ export class DeleteTaskUseCase {
 
   async execute({ taskId, userId }) {
     const task = await this.taskRepository.findById(taskId);
-
-    if (!task) {
-      const err = new Error('Task not found');
-      err.status = 404;
-      throw err;
-    }
-
-    if (task.userId !== userId) {
-      const err = new Error('Forbidden');
-      err.status = 403;
-      throw err;
-    }
+    if (!task) throw new NotFoundError('Task not found');
+    if (task.userId !== userId) throw new ForbiddenError();
 
     await this.taskRepository.delete(taskId);
   }

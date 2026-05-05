@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { UserEntity } from '../domain/user.entity.js';
+import { ConflictError } from '../../../shared/domain/domain.error.js';
 
 export class RegisterUserUseCase {
   constructor(userRepository) {
@@ -8,15 +9,10 @@ export class RegisterUserUseCase {
 
   async execute({ name, email, password }) {
     const existing = await this.userRepository.findByEmail(email);
-    if (existing) {
-      const err = new Error('Email already in use');
-      err.status = 409;
-      throw err;
-    }
+    if (existing) throw new ConflictError('Email already in use');
 
     const hashed = await bcrypt.hash(password, 10);
     const user = new UserEntity({ id: null, name, email, password: hashed, createdAt: new Date() });
-    const saved = await this.userRepository.save(user);
-    return saved;
+    return this.userRepository.save(user);
   }
 }
