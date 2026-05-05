@@ -17,6 +17,7 @@ import { AuthController } from './contexts/auth/infrastructure/auth.controller.j
 import { TaskController } from './contexts/tasks/infrastructure/task.controller.js';
 import { createAuthRouter } from './contexts/auth/infrastructure/auth.routes.js';
 import { createTaskRouter } from './contexts/tasks/infrastructure/task.routes.js';
+import { createAuthMiddleware } from './contexts/auth/infrastructure/auth.middleware.js';
 import { notFoundHandler } from './shared/middlewares/not.found.handler.js';
 import { errorHandler } from './shared/middlewares/error.handler.js';
 
@@ -54,9 +55,12 @@ export function createApp() {
   const authController = new AuthController(registerUseCase, loginUseCase, jwtService);
   const taskController = new TaskController(createTaskUseCase, listTasksUseCase, completeTaskUseCase, deleteTaskUseCase);
 
+  // Middlewares
+  const authMiddleware = createAuthMiddleware(jwtService);
+
   // Routers
   app.use('/api/v1/auth', createAuthRouter(authController));
-  app.use('/api/v1/tasks', createTaskRouter(taskController));
+  app.use('/api/v1/tasks', createTaskRouter(taskController, authMiddleware));
 
   app.use(notFoundHandler);
   app.use(errorHandler);

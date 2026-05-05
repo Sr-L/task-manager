@@ -1,9 +1,8 @@
 import { Router } from 'express';
-import { authMiddleware } from '../../auth/infrastructure/auth.middleware.js';
 import { createTaskValidators } from './task.validators.js';
 import { validateRequest } from '../../../shared/middlewares/validate.request.js';
 
-export function createTaskRouter(taskController) {
+export function createTaskRouter(taskController, authMiddleware) {
   const router = Router();
 
   router.use(authMiddleware);
