@@ -8,7 +8,7 @@ export default {
     '!src/server.js',
     '!src/shared/infrastructure/database/mongoose.connection.js'
   ],
-  coverageThresholds: {
+  coverageThreshold: {
     global: {
       lines: 80
     }
