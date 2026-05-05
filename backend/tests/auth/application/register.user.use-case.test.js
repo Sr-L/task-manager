@@ -48,4 +48,17 @@ describe('RegisterUserUseCase', () => {
     expect(savedUser.password).not.toBe('secret123');
     expect(savedUser.password).toMatch(/^\$2[aby]\$/);
   });
+
+  it('should reject passwords shorter than 6 characters', async () => {
+    await expect(useCase.execute({ name: 'Luis', email: 'luis@test.com', password: '123' }))
+      .rejects.toMatchObject({ status: 400, name: 'WeakPasswordError' });
+
+    expect(userRepository.findByEmail).not.toHaveBeenCalled();
+    expect(userRepository.save).not.toHaveBeenCalled();
+  });
+
+  it('should reject empty password', async () => {
+    await expect(useCase.execute({ name: 'Luis', email: 'luis@test.com', password: '' }))
+      .rejects.toMatchObject({ status: 400, name: 'WeakPasswordError' });
+  });
 });

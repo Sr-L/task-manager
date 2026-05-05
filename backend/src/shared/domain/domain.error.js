@@ -29,3 +29,9 @@ export class InvalidCredentialsError extends DomainError {
     super(message, 401);
   }
 }
+
+export class WeakPasswordError extends DomainError {
+  constructor(message = 'Password must be at least 6 characters') {
+    super(message, 400);
+  }
+}
