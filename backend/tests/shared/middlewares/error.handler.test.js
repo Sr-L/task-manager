@@ -90,7 +90,7 @@ describe('errorHandler', () => {
     expect(logSpy).toHaveBeenCalledWith(err);
   });
 
-  it('exposes the original message and stack in development', () => {
+  it('exposes the original message in development but never the stack', () => {
     process.env.NODE_ENV = 'development';
     const err = new Error('boom');
     err.stack = 'fake-stack';
@@ -100,8 +100,9 @@ describe('errorHandler', () => {
     expect(res.json).toHaveBeenCalledWith({
       success: false,
       message: 'boom',
-      stack: 'fake-stack',
     });
+    const payload = res.json.mock.calls[0][0];
+    expect(payload).not.toHaveProperty('stack');
     expect(logSpy).toHaveBeenCalledWith(err);
   });
 

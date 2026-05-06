@@ -24,6 +24,5 @@ export function errorHandler(err, _req, res, _next) {
   res.status(status || 500).json({
     success: false,
     message: isDev ? err.message : 'Internal Server Error',
-    ...(isDev && { stack: err.stack }),
   });
 }
