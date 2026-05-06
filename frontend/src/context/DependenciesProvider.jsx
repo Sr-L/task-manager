@@ -11,7 +11,12 @@ const DependenciesContext = createContext(null);
  */
 function createDependencies() {
   const getToken = () => localStorage.getItem('tm_token');
-  const http = createHttpClient(getToken);
+  const onUnauthorized = () => {
+    localStorage.removeItem('tm_token');
+    localStorage.removeItem('tm_user');
+    window.location.href = '/login';
+  };
+  const http = createHttpClient(getToken, onUnauthorized);
   return {
     authApiService: createAuthApiService(http),
     taskApiService: createTaskApiService(http),
