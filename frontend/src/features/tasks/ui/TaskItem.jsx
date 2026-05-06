@@ -1,0 +1,38 @@
+import styles from './TaskItem.module.css';
+
+export function TaskItem({ task, onComplete, onDelete }) {
+  return (
+    <li className={`${styles.item} ${task.completed ? styles.itemDone : ''}`}>
+      <button
+        className={styles.check}
+        onClick={() => !task.completed && onComplete(task.id)}
+        aria-label={task.completed ? 'Completed' : 'Mark as complete'}
+        type="button"
+        disabled={task.completed}
+      >
+        {task.completed && <span className={styles.checkMark}>✓</span>}
+      </button>
+
+      <div className={styles.body}>
+        <p className={styles.itemTitle}>{task.title}</p>
+        {task.description && (
+          <p className={styles.itemDesc}>{task.description}</p>
+        )}
+        {task.responsible && (
+          <p className={styles.responsible}>
+            {task.responsible}
+          </p>
+        )}
+      </div>
+
+      <button
+        className={styles.deleteBtn}
+        onClick={() => onDelete(task.id)}
+        aria-label="Delete task"
+        type="button"
+      >
+        ✕
+      </button>
+    </li>
+  );
+}

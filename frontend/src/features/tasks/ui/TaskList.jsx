@@ -1,3 +1,4 @@
+import { TaskItem } from './TaskItem.jsx';
 import styles from './TaskList.module.css';
 
 export function TaskList({ tasks, loading, onComplete, onDelete }) {
@@ -26,43 +27,5 @@ export function TaskList({ tasks, loading, onComplete, onDelete }) {
         <TaskItem key={task.id} task={task} onComplete={onComplete} onDelete={onDelete} />
       ))}
     </ul>
-  );
-}
-
-function TaskItem({ task, onComplete, onDelete }) {
-  return (
-    <li className={`${styles.item} ${task.completed ? styles.itemDone : ''}`}>
-      <button
-        className={styles.check}
-        onClick={() => !task.completed && onComplete(task.id)}
-        aria-label={task.completed ? 'Completed' : 'Mark as complete'}
-        type="button"
-        disabled={task.completed}
-      >
-        {task.completed && <span className={styles.checkMark}>✓</span>}
-      </button>
-
-      <div className={styles.body}>
-        <p className={styles.itemTitle}>{task.title}</p>
-        {task.description && (
-          <p className={styles.itemDesc}>{task.description}</p>
-        )}
-        {task.responsible && (
-          <p className={styles.responsible}>
-            <span className={styles.avatar}>{task.responsible[0].toUpperCase()}</span>
-            {task.responsible}
-          </p>
-        )}
-      </div>
-
-      <button
-        className={styles.deleteBtn}
-        onClick={() => onDelete(task.id)}
-        aria-label="Delete task"
-        type="button"
-      >
-        ✕
-      </button>
-    </li>
   );
 }
