@@ -4,7 +4,7 @@ import styles from './TaskList.module.css';
 export function TaskList({ tasks, loading, onComplete, onDelete }) {
   if (loading) {
     return (
-      <ul className={styles.list}>
+      <ul className={styles.list} aria-busy="true">
         {[1, 2, 3].map((n) => (
           <li key={n} className={styles.skeleton} aria-hidden="true" />
         ))}

@@ -55,6 +55,7 @@ export function TasksPage() {
             key={f}
             className={`${styles.filterBtn} ${filter === f ? styles.filterActive : ''}`}
             onClick={() => setFilter(f)}
+            aria-pressed={filter === f}
             type="button"
           >
             {f.charAt(0).toUpperCase() + f.slice(1)}
@@ -62,7 +63,7 @@ export function TasksPage() {
         ))}
       </div>
 
-      {error && <p className={styles.error}>{error}</p>}
+      {error && <p className={styles.error} role="alert">{error}</p>}
 
       <TaskList
         tasks={filtered}
