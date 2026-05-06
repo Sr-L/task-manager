@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { Input } from '../../../shared/ui/components/Input.jsx';
+import { Button } from '../../../shared/ui/components/Button.jsx';
 import styles from './TaskForm.module.css';
 
 export function TaskForm({ onSubmit }) {
@@ -32,30 +34,23 @@ export function TaskForm({ onSubmit }) {
       <h2 className={styles.formTitle}>New task</h2>
 
       <div className={styles.grid}>
-        <div className={styles.field}>
-          <label className={styles.label} htmlFor="title">Title *</label>
-          <input
-            id="title"
-            className={`${styles.input} ${fieldErrors.title ? styles.inputError : ''}`}
-            name="title"
-            value={form.title}
-            onChange={handleChange}
-            placeholder="What needs to be done?"
-          />
-          {fieldErrors.title && <span className={styles.fieldError}>{fieldErrors.title}</span>}
-        </div>
-
-        <div className={styles.field}>
-          <label className={styles.label} htmlFor="responsible">Responsible</label>
-          <input
-            id="responsible"
-            className={styles.input}
-            name="responsible"
-            value={form.responsible}
-            onChange={handleChange}
-            placeholder="Who owns this?"
-          />
-        </div>
+        <Input
+          label="Title *"
+          id="title"
+          name="title"
+          value={form.title}
+          onChange={handleChange}
+          error={fieldErrors.title}
+          placeholder="What needs to be done?"
+        />
+        <Input
+          label="Responsible"
+          id="responsible"
+          name="responsible"
+          value={form.responsible}
+          onChange={handleChange}
+          placeholder="Who owns this?"
+        />
       </div>
 
       <div className={styles.field}>
@@ -71,11 +66,11 @@ export function TaskForm({ onSubmit }) {
         />
       </div>
 
-      {apiError && <p className={styles.apiError}>{apiError}</p>}
+      {apiError && <p className={styles.apiError} role="alert">{apiError}</p>}
 
-      <button className={styles.submit} type="submit" disabled={loading}>
-        {loading ? 'Creating…' : 'Create task'}
-      </button>
+      <Button type="submit" loading={loading} className={styles.submit}>
+        Create task
+      </Button>
     </form>
   );
 }

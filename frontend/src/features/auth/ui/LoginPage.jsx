@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../application/useAuth.js';
+import { Input } from '../../../shared/ui/components/Input.jsx';
+import { Button } from '../../../shared/ui/components/Button.jsx';
 import styles from './LoginPage.module.css';
 
 export function LoginPage() {
@@ -51,40 +53,45 @@ export function LoginPage() {
 
         <form className={styles.form} onSubmit={handleSubmit} noValidate>
           {mode === 'register' && (
-            <Field label="Name" name="name" type="text" value={form.name}
-              onChange={handleChange} error={fieldErrors.name} placeholder="Alice" />
+            <Input
+              label="Name"
+              name="name"
+              type="text"
+              value={form.name}
+              onChange={handleChange}
+              error={fieldErrors.name}
+              placeholder="Alice"
+              autoComplete="name"
+            />
           )}
-          <Field label="Email" name="email" type="email" value={form.email}
-            onChange={handleChange} error={fieldErrors.email} placeholder="you@example.com" />
-          <Field label="Password" name="password" type="password" value={form.password}
-            onChange={handleChange} error={fieldErrors.password} placeholder="••••••••" />
+          <Input
+            label="Email"
+            name="email"
+            type="email"
+            value={form.email}
+            onChange={handleChange}
+            error={fieldErrors.email}
+            placeholder="you@example.com"
+            autoComplete="email"
+          />
+          <Input
+            label="Password"
+            name="password"
+            type="password"
+            value={form.password}
+            onChange={handleChange}
+            error={fieldErrors.password}
+            placeholder="••••••••"
+            autoComplete="current-password"
+          />
 
-          {error && <p className={styles.globalError}>{error}</p>}
+          {error && <p className={styles.globalError} role="alert">{error}</p>}
 
-          <button className={styles.submit} type="submit" disabled={loading}>
-            {loading ? 'Loading…' : mode === 'login' ? 'Sign in →' : 'Create account →'}
-          </button>
+          <Button type="submit" loading={loading} className={styles.submit}>
+            {mode === 'login' ? 'Sign in →' : 'Create account →'}
+          </Button>
         </form>
       </div>
-    </div>
-  );
-}
-
-function Field({ label, name, type, value, onChange, error, placeholder }) {
-  return (
-    <div className={styles.field}>
-      <label className={styles.label} htmlFor={name}>{label}</label>
-      <input
-        id={name}
-        className={`${styles.input} ${error ? styles.inputError : ''}`}
-        name={name}
-        type={type}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        autoComplete={type === 'password' ? 'current-password' : name}
-      />
-      {error && <span className={styles.fieldError}>{error}</span>}
     </div>
   );
 }
