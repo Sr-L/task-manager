@@ -34,7 +34,7 @@ cp .env.example .env
 
 | Variable | Descripción | Ejemplo |
 |---|---|---|
-| `PORT` | Puerto del servidor | `3000` |
+| `PORT` | Puerto del servidor | `3001` |
 | `MONGODB_URI` | URI de conexión a MongoDB | `mongodb://localhost:27017/tasks-manager` |
 | `JWT_SECRET` | Clave secreta para firmar JWT | `supersecretkey` |
 | `JWT_EXPIRES_IN` | Expiración del token | `7d` |
@@ -89,7 +89,7 @@ npm run lint
 
 ### Documentación Swagger
 
-Disponible en: `http://localhost:3000/api/v1/docs`
+Disponible en: `http://localhost:3001/api/v1/docs`
 
 ---
 
@@ -98,7 +98,7 @@ Disponible en: `http://localhost:3000/api/v1/docs`
 ### Registro
 
 ```bash
-curl -X POST http://localhost:3000/api/v1/auth/register \
+curl -X POST http://localhost:3001/api/v1/auth/register \
   -H "Content-Type: application/json" \
   -d '{"name": "Luis", "email": "luis@example.com", "password": "secret123"}'
 ```
@@ -106,7 +106,7 @@ curl -X POST http://localhost:3000/api/v1/auth/register \
 ### Login
 
 ```bash
-curl -X POST http://localhost:3000/api/v1/auth/login \
+curl -X POST http://localhost:3001/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email": "luis@example.com", "password": "secret123"}'
 ```
@@ -114,7 +114,7 @@ curl -X POST http://localhost:3000/api/v1/auth/login \
 ### Crear tarea
 
 ```bash
-curl -X POST http://localhost:3000/api/v1/tasks \
+curl -X POST http://localhost:3001/api/v1/tasks \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <token>" \
   -d '{"title": "Mi tarea", "description": "Detalles", "responsible": "Luis"}'
@@ -123,7 +123,7 @@ curl -X POST http://localhost:3000/api/v1/tasks \
 ### Listar tareas
 
 ```bash
-curl http://localhost:3000/api/v1/tasks \
+curl http://localhost:3001/api/v1/tasks \
   -H "Authorization: Bearer <token>"
 ```
 
@@ -132,24 +132,29 @@ curl http://localhost:3000/api/v1/tasks \
 ## Arquitectura
 
 ```
-src/
-├── app.js                        # Express factory + DI wiring
-├── server.js                     # Entry point
-├── shared/
-│   ├── infrastructure/
-│   │   ├── database/             # Conexión Mongoose
-│   │   └── logger/               # Logger con niveles
-│   ├── middlewares/              # error, notFound, validateRequest
-│   └── utils/                    # response.handler
-└── contexts/
-    ├── auth/
-    │   ├── domain/               # UserEntity, UserRepository (contrato)
-    │   ├── application/          # RegisterUserUseCase, LoginUserUseCase
-    │   └── infrastructure/       # Controller, Routes, Model, JWT, Middleware
-    └── tasks/
-        ├── domain/               # TaskEntity, TaskRepository (contrato)
-        ├── application/          # Create, List, Complete, Delete use cases
-        └── infrastructure/       # Controller, Routes, Model, Validators
+backend/
+├── docs/
+│   └── swagger.js                # OpenAPI spec (swagger-jsdoc)
+└── src/
+    ├── app.js                    # Express factory + DI wiring
+    ├── server.js                 # Entry point
+    ├── shared/
+    │   ├── domain/               # DomainError
+    │   ├── infrastructure/
+    │   │   ├── database/         # Conexión Mongoose
+    │   │   └── logger/           # Logger con niveles
+    │   ├── middlewares/          # error.handler, not.found.handler, validate.request
+    │   └── utils/                # response.handler
+    └── contexts/
+        ├── auth/
+        │   ├── domain/           # UserEntity, UserRepository (contrato)
+        │   ├── application/      # RegisterUserUseCase, LoginUserUseCase
+        │   └── infrastructure/   # Controller, Routes, Mongo repo, Model,
+        │                         # JwtService, BcryptPasswordHasher, Middleware
+        └── tasks/
+            ├── domain/           # TaskEntity, TaskRepository (contrato)
+            ├── application/      # Create, List, Complete, Delete use cases
+            └── infrastructure/   # Controller, Routes, Mongo repo, Model, Validators
 ```
 
 ### Principios aplicados
@@ -165,14 +170,23 @@ src/
 
 ```
 tests/
+├── app.test.js                   # createApp() health + 404
 ├── auth/
-│   ├── application/    # Unit tests: RegisterUserUseCase, LoginUserUseCase
-│   └── infrastructure/ # Integration tests: AuthController (supertest)
+│   ├── domain/                   # UserEntity, UserRepository (contrato)
+│   ├── application/              # Unit: RegisterUserUseCase, LoginUserUseCase
+│   └── infrastructure/           # AuthController (supertest), AuthMiddleware,
+│                                 # JwtService, BcryptPasswordHasher
+├── shared/
+│   ├── infrastructure/logger/    # Logger
+│   ├── middlewares/              # error.handler, not.found.handler
+│   └── utils/                    # response.handler
 └── tasks/
-    ├── application/    # Unit tests: Create, List, Complete, Delete use cases
-    └── infrastructure/ # Integration tests: TaskController (supertest)
+    ├── domain/                   # TaskEntity, TaskRepository (contrato)
+    ├── application/              # Unit: Create, List, Complete, Delete use cases
+    └── infrastructure/           # TaskController (supertest)
 ```
 
+- **Domain**: funciones puras y contratos verificados sin dependencias.
 - **Use cases**: mockeados con `jest.fn()`, sin base de datos.
 - **Controllers**: supertest sobre Express, mocking de use cases.
-- **Total**: 27 tests — 8 suites.
+- **Total**: 121 tests — 20 suites.

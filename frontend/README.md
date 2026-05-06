@@ -1,6 +1,6 @@
 # Task Manager Frontend
 
-Aplicación React para gestión de tareas
+Aplicación React para gestión de tareas.
 
 ## Stack
 
@@ -22,9 +22,13 @@ src/
 │   ├── AuthContext.jsx              # Estado global de autenticación
 │   └── DependenciesProvider.jsx    # Composition root (inyección de deps)
 ├── shared/
+│   ├── components/
+│   │   ├── Layout.jsx              # Shell con header + logout
+│   │   └── PrivateRoute.jsx        # Guard de rutas autenticadas
 │   ├── infrastructure/
 │   │   └── httpClient.js           # Cliente Axios con interceptor JWT
 │   └── ui/
+│       ├── components/             # Primitivas: Button, Input, Spinner
 │       └── global.css
 └── features/
     ├── auth/
@@ -48,6 +52,7 @@ src/
             ├── TasksPage.jsx
             ├── TaskForm.jsx
             ├── TaskList.jsx
+            ├── TaskItem.jsx
             └── *.module.css
 ```
 
@@ -116,9 +121,17 @@ npm run lint
 - `authValidations.test.js` — validaciones de formularios de auth
 - `taskDomain.test.js` — validación de tareas, filtros, sort
 
+**Contexto (composition root + estado global):**
+- `AuthContext.test.jsx` — login/logout, persistencia y rehidratación
+- `DependenciesProvider.test.jsx` — inyección de dependencias por contexto
+
+**Infraestructura compartida:**
+- `httpClient.test.js` — interceptor JWT y manejo de respuestas
+
 **Componentes UI:**
 - `LoginPage.test.jsx` — renderizado, errores de campo, llamada al servicio, error de servidor, switch login/register
 - `TaskList.test.jsx` — skeleton, estado vacío, renderizado de ítems, complete, delete
+- `TaskItem.test.jsx` — render, toggle de completado, eliminar
 - `TaskForm.test.jsx` — renderizado, validación, submit, reset, error de API
 
 **Hooks (application layer):**

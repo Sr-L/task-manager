@@ -11,7 +11,7 @@ if (missing.length > 0) {
   process.exit(1);
 }
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 async function bootstrap() {
   await connectDB();
