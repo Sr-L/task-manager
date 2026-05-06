@@ -1,5 +1,10 @@
 import { useState } from 'react';
 import { useTasks } from '../application/useTasks.js';
+import {
+  filterCompleted,
+  filterPending,
+  sortByCreatedAt,
+} from '../domain/taskDomain.js';
 import { TaskForm } from './TaskForm.jsx';
 import { TaskList } from './TaskList.jsx';
 import styles from './TasksPage.module.css';
@@ -9,13 +14,13 @@ export function TasksPage() {
   const [showForm, setShowForm] = useState(false);
   const [filter, setFilter] = useState('all'); // 'all' | 'pending' | 'done'
 
-  const filtered = tasks.filter((t) => {
-    if (filter === 'pending') return !t.completed;
-    if (filter === 'done') return t.completed;
-    return true;
-  });
+  const ordered = sortByCreatedAt(tasks);
+  const filtered =
+    filter === 'pending' ? filterPending(ordered)
+    : filter === 'done' ? filterCompleted(ordered)
+    : ordered;
 
-  const pendingCount = tasks.filter((t) => !t.completed).length;
+  const pendingCount = filterPending(tasks).length;
 
   async function handleCreate(data) {
     const result = await createTask(data);

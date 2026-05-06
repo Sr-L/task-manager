@@ -1,5 +1,5 @@
 /**
- * Pure domain functions — no React, no side effects.
+ * Pure domain functions — no React, no side effects.1
  */
 
 export function validateTaskForm({ title }) {
