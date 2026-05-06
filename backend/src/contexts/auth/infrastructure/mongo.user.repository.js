@@ -19,7 +19,7 @@ export class MongoUserRepository extends UserRepository {
 
   async findCredentialsByEmail(email) {
     const doc = await UserModel.findOne({ email });
-    if (!doc) return null;
+    if (!doc || !doc.password) return null;
     return { user: toEntity(doc), passwordHash: doc.password };
   }
 
