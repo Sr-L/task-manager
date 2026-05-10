@@ -15,8 +15,8 @@ const PORT = process.env.PORT || 3001;
 
 async function bootstrap() {
   await connectDB();
-  const app = createApp();
   await syncAllIndexes();
+  const app = createApp();
   app.listen(PORT, () => {
     logger.info(`Server running on port ${PORT}`);
     logger.info(`Swagger docs: http://localhost:${PORT}/api/v1/docs`);
