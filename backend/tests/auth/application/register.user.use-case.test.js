@@ -3,6 +3,7 @@ import { RegisterUserUseCase } from '../../../src/contexts/auth/application/regi
 
 describe('RegisterUserUseCase', () => {
   let userRepository;
+  let jwtService;
   let passwordHasher;
   let useCase;
 
@@ -11,14 +12,18 @@ describe('RegisterUserUseCase', () => {
       findByEmail: jest.fn(),
       save: jest.fn(),
     };
+    jwtService = {
+      signToken: jest.fn().mockReturnValue('jwt-token'),
+      verifyToken: jest.fn(),
+    };
     passwordHasher = {
       hash: jest.fn().mockResolvedValue('hashed-password'),
       compare: jest.fn(),
     };
-    useCase = new RegisterUserUseCase(userRepository, passwordHasher);
+    useCase = new RegisterUserUseCase(userRepository, jwtService, passwordHasher);
   });
 
-  it('should register a user with valid data', async () => {
+  it('should register a user with valid data and return { token, user }', async () => {
     userRepository.findByEmail.mockResolvedValue(null);
     userRepository.save.mockResolvedValue({ id: '123', name: 'Luis', email: 'luis@test.com' });
 
@@ -26,8 +31,11 @@ describe('RegisterUserUseCase', () => {
 
     expect(userRepository.findByEmail).toHaveBeenCalledWith('luis@test.com');
     expect(userRepository.save).toHaveBeenCalledTimes(1);
-    expect(result.email).toBe('luis@test.com');
-    expect(result.password).toBeUndefined();
+    expect(jwtService.signToken).toHaveBeenCalledWith({ id: '123', email: 'luis@test.com' });
+    expect(result).toEqual({
+      token: 'jwt-token',
+      user: { id: '123', name: 'Luis', email: 'luis@test.com' },
+    });
   });
 
   it('should throw 409 when email is already in use', async () => {

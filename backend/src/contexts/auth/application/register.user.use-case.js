@@ -1,8 +1,9 @@
 import { ConflictError, WeakPasswordError } from '../../../shared/domain/domain.error.js';
 
 export class RegisterUserUseCase {
-  constructor(userRepository, passwordHasher) {
+  constructor(userRepository, jwtService, passwordHasher) {
     this.userRepository = userRepository;
+    this.jwtService = jwtService;
     this.passwordHasher = passwordHasher;
   }
 
@@ -13,6 +14,8 @@ export class RegisterUserUseCase {
     if (existing) throw new ConflictError('Email already in use');
 
     const passwordHash = await this.passwordHasher.hash(password);
-    return this.userRepository.save({ name, email, passwordHash });
+    const user = await this.userRepository.save({ name, email, passwordHash });
+    const token = this.jwtService.signToken({ id: user.id, email: user.email });
+    return { token, user };
   }
 }

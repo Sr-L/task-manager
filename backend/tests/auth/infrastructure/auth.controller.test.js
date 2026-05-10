@@ -16,20 +16,20 @@ function buildApp(controller) {
 describe('AuthController', () => {
   let registerUseCase;
   let loginUseCase;
-  let jwtService;
   let controller;
 
   beforeEach(() => {
     registerUseCase = { execute: jest.fn() };
     loginUseCase = { execute: jest.fn() };
-    jwtService = { signToken: jest.fn(), verifyToken: jest.fn() };
-    controller = new AuthController(registerUseCase, loginUseCase, jwtService);
+    controller = new AuthController(registerUseCase, loginUseCase);
   });
 
   describe('POST /api/v1/auth/register', () => {
     it('returns 201 with { token, user } on success', async () => {
-      registerUseCase.execute.mockResolvedValue({ id: '1', name: 'Luis', email: 'luis@test.com' });
-      jwtService.signToken.mockReturnValue('jwt-token');
+      registerUseCase.execute.mockResolvedValue({
+        token: 'jwt-token',
+        user: { id: '1', name: 'Luis', email: 'luis@test.com' },
+      });
 
       const res = await request(buildApp(controller)).post('/api/v1/auth/register').send({
         name: 'Luis',
@@ -48,8 +48,10 @@ describe('AuthController', () => {
     });
 
     it('passes name/email/password to the use case verbatim', async () => {
-      registerUseCase.execute.mockResolvedValue({ id: '1', name: 'Luis', email: 'luis@test.com' });
-      jwtService.signToken.mockReturnValue('t');
+      registerUseCase.execute.mockResolvedValue({
+        token: 't',
+        user: { id: '1', name: 'Luis', email: 'luis@test.com' },
+      });
 
       await request(buildApp(controller)).post('/api/v1/auth/register').send({
         name: 'Luis',
@@ -62,19 +64,6 @@ describe('AuthController', () => {
         email: 'luis@test.com',
         password: 'secret123',
       });
-    });
-
-    it('signs the JWT with { id, email } of the saved user', async () => {
-      registerUseCase.execute.mockResolvedValue({ id: 'abc', name: 'Luis', email: 'luis@test.com' });
-      jwtService.signToken.mockReturnValue('t');
-
-      await request(buildApp(controller)).post('/api/v1/auth/register').send({
-        name: 'Luis',
-        email: 'luis@test.com',
-        password: 'secret123',
-      });
-
-      expect(jwtService.signToken).toHaveBeenCalledWith({ id: 'abc', email: 'luis@test.com' });
     });
 
     it('forwards use case errors to next() so errorHandler maps them', async () => {
@@ -90,7 +79,6 @@ describe('AuthController', () => {
 
       expect(res.status).toBe(409);
       expect(res.body.success).toBe(false);
-      expect(jwtService.signToken).not.toHaveBeenCalled();
     });
 
     it('returns 422 when fields are missing (validators short-circuit)', async () => {

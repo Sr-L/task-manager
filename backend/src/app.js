@@ -44,7 +44,7 @@ export function createApp() {
   const passwordHasher = new BcryptPasswordHasher();
 
   // Use cases
-  const registerUseCase = new RegisterUserUseCase(userRepository, passwordHasher);
+  const registerUseCase = new RegisterUserUseCase(userRepository, jwtService, passwordHasher);
   const loginUseCase = new LoginUserUseCase(userRepository, jwtService, passwordHasher);
   const createTaskUseCase = new CreateTaskUseCase(taskRepository);
   const listTasksUseCase = new ListTasksUseCase(taskRepository);
@@ -52,7 +52,7 @@ export function createApp() {
   const deleteTaskUseCase = new DeleteTaskUseCase(taskRepository);
 
   // Controllers
-  const authController = new AuthController(registerUseCase, loginUseCase, jwtService);
+  const authController = new AuthController(registerUseCase, loginUseCase);
   const taskController = new TaskController(createTaskUseCase, listTasksUseCase, completeTaskUseCase, deleteTaskUseCase);
 
   // Middlewares
