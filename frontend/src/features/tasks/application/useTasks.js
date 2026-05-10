@@ -6,16 +6,16 @@ export function useTasks() {
   const { taskApiService, notifier } = useDependencies();
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [loadError, setLoadError] = useState(null);
 
   const fetchTasks = useCallback(async () => {
     setLoading(true);
-    setError(null);
+    setLoadError(null);
     try {
       const data = await taskApiService.getAll();
       setTasks(data);
     } catch {
-      setError('Failed to load tasks');
+      setLoadError('Failed to load tasks');
     } finally {
       setLoading(false);
     }
@@ -44,7 +44,7 @@ export function useTasks() {
       setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
       notifier.success('Task completed');
     } catch {
-      setError('Failed to update task');
+      notifier.error('Failed to update task');
     }
   }
 
@@ -54,9 +54,9 @@ export function useTasks() {
       setTasks((prev) => prev.filter((t) => t.id !== id));
       notifier.success('Task deleted');
     } catch {
-      setError('Failed to delete task');
+      notifier.error('Failed to delete task');
     }
   }
 
-  return { tasks, loading, error, createTask, completeTask, deleteTask, refresh: fetchTasks };
+  return { tasks, loading, loadError, createTask, completeTask, deleteTask, refresh: fetchTasks };
 }
