@@ -31,4 +31,14 @@ describe('UserEntity', () => {
     expect(() => new UserEntity({ ...valid, email }))
       .toThrow(expect.objectContaining({ status: 400, name: 'InvalidEmailError' }));
   });
+
+  it.each(['', '   ', undefined, null])('rejects empty name: %p', (name) => {
+    expect(() => new UserEntity({ ...valid, name }))
+      .toThrow(expect.objectContaining({ status: 400, name: 'EmptyNameError' }));
+  });
+
+  it('trims surrounding whitespace from name', () => {
+    const user = new UserEntity({ ...valid, name: '  Luis  ' });
+    expect(user.name).toBe('Luis');
+  });
 });

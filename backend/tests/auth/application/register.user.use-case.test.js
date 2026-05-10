@@ -49,14 +49,15 @@ describe('RegisterUserUseCase', () => {
 
   it('should pass the hashed password to save (never the plain text)', async () => {
     userRepository.findByEmail.mockResolvedValue(null);
-    userRepository.save.mockImplementation((arg) => Promise.resolve({ id: '1', ...arg }));
+    userRepository.save.mockImplementation((user) => Promise.resolve({ id: '1', name: user.name, email: user.email }));
 
     await useCase.execute({ name: 'Luis', email: 'luis@test.com', password: 'secret123' });
 
     expect(passwordHasher.hash).toHaveBeenCalledWith('secret123');
-    const arg = userRepository.save.mock.calls[0][0];
-    expect(arg).toEqual({ name: 'Luis', email: 'luis@test.com', passwordHash: 'hashed-password' });
-    expect(arg.password).toBeUndefined();
+    const [userArg, hashArg] = userRepository.save.mock.calls[0];
+    expect(userArg).toMatchObject({ name: 'Luis', email: 'luis@test.com' });
+    expect(userArg.password).toBeUndefined();
+    expect(hashArg).toBe('hashed-password');
   });
 
   it('should reject passwords shorter than 6 characters', async () => {
@@ -70,5 +71,13 @@ describe('RegisterUserUseCase', () => {
   it('should reject empty password', async () => {
     await expect(useCase.execute({ name: 'Luis', email: 'luis@test.com', password: '' }))
       .rejects.toMatchObject({ status: 400, name: 'WeakPasswordError' });
+  });
+
+  it('should reject empty name via domain validation before touching the repository', async () => {
+    await expect(useCase.execute({ name: '   ', email: 'luis@test.com', password: 'secret123' }))
+      .rejects.toMatchObject({ status: 400, name: 'EmptyNameError' });
+
+    expect(userRepository.findByEmail).not.toHaveBeenCalled();
+    expect(userRepository.save).not.toHaveBeenCalled();
   });
 });

@@ -1,4 +1,5 @@
 import { ConflictError, WeakPasswordError } from '../../../shared/domain/domain.error.js';
+import { UserEntity } from '../domain/user.entity.js';
 
 export class RegisterUserUseCase {
   constructor(userRepository, jwtService, passwordHasher) {
@@ -10,12 +11,14 @@ export class RegisterUserUseCase {
   async execute({ name, email, password }) {
     if (!password || password.length < 6) throw new WeakPasswordError();
 
-    const existing = await this.userRepository.findByEmail(email);
+    const user = new UserEntity({ id: null, name, email, createdAt: new Date() });
+
+    const existing = await this.userRepository.findByEmail(user.email);
     if (existing) throw new ConflictError('Email already in use');
 
     const passwordHash = await this.passwordHasher.hash(password);
-    const user = await this.userRepository.save({ name, email, passwordHash });
-    const token = this.jwtService.signToken({ id: user.id, email: user.email });
-    return { token, user };
+    const saved = await this.userRepository.save(user, passwordHash);
+    const token = this.jwtService.signToken({ id: saved.id, email: saved.email });
+    return { token, user: saved };
   }
 }

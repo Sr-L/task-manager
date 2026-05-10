@@ -23,8 +23,8 @@ export class MongoUserRepository extends UserRepository {
     return { user: toEntity(doc), passwordHash: doc.password };
   }
 
-  async save({ name, email, passwordHash }) {
-    const doc = await UserModel.create({ name, email, password: passwordHash });
+  async save(user, passwordHash) {
+    const doc = await UserModel.create({ name: user.name, email: user.email, password: passwordHash });
     return toEntity(doc);
   }
 }

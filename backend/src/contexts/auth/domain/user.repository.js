@@ -7,7 +7,7 @@ export class UserRepository {
     throw new Error('UserRepository.findCredentialsByEmail not implemented');
   }
 
-  async save(_data) {
+  async save(_user, _passwordHash) {
     throw new Error('UserRepository.save not implemented');
   }
 }

@@ -42,6 +42,12 @@ export class InvalidEmailError extends DomainError {
   }
 }
 
+export class EmptyNameError extends DomainError {
+  constructor(message = 'Name cannot be empty') {
+    super(message, 400);
+  }
+}
+
 export class EmptyTaskTitleError extends DomainError {
   constructor(message = 'Task title cannot be empty') {
     super(message, 400);
