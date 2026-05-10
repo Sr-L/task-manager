@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense, useState, useMemo, useCallback } from 'react';
 import { useTasks } from '../application/useTasks.js';
 import {
   filterCompleted,
@@ -18,19 +18,20 @@ export function TasksPage() {
   const [showForm, setShowForm] = useState(false);
   const [filter, setFilter] = useState('all'); // 'all' | 'pending' | 'done'
 
-  const ordered = sortByCreatedAt(tasks);
-  const filtered =
-    filter === 'pending' ? filterPending(ordered)
-    : filter === 'done' ? filterCompleted(ordered)
-    : ordered;
+  const ordered = useMemo(() => sortByCreatedAt(tasks), [tasks]);
+  const filtered = useMemo(() => {
+    if (filter === 'pending') return filterPending(ordered);
+    if (filter === 'done') return filterCompleted(ordered);
+    return ordered;
+  }, [filter, ordered]);
 
-  const pendingCount = filterPending(tasks).length;
+  const pendingCount = useMemo(() => filterPending(tasks).length, [tasks]);
 
-  async function handleCreate(data) {
+  const handleCreate = useCallback(async (data) => {
     const result = await createTask(data);
     if (result?.success) setShowForm(false);
     return result;
-  }
+  }, [createTask]);
 
   return (
     <>

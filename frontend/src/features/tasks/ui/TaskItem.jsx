@@ -1,6 +1,7 @@
+import { memo } from 'react';
 import styles from './TaskItem.module.css';
 
-export function TaskItem({ task, onComplete, onDelete }) {
+export const TaskItem = memo(function TaskItem({ task, onComplete, onDelete }) {
   return (
     <li className={`${styles.item} ${task.completed ? styles.itemDone : ''}`}>
       <button
@@ -38,4 +39,4 @@ export function TaskItem({ task, onComplete, onDelete }) {
       </button>
     </li>
   );
-}
+});

@@ -23,7 +23,7 @@ export function useTasks() {
 
   useEffect(() => { fetchTasks(); }, [fetchTasks]);
 
-  async function createTask(formData) {
+  const createTask = useCallback(async (formData) => {
     const errors = validateTaskForm(formData);
     if (hasErrors(errors)) return { fieldErrors: errors };
 
@@ -36,9 +36,9 @@ export function useTasks() {
       const msg = err.response?.data?.message ?? 'Failed to create task';
       return { error: msg };
     }
-  }
+  }, [taskApiService, notifier]);
 
-  async function completeTask(id) {
+  const completeTask = useCallback(async (id) => {
     try {
       const updated = await taskApiService.complete(id);
       setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
@@ -46,9 +46,9 @@ export function useTasks() {
     } catch {
       notifier.error('Failed to update task');
     }
-  }
+  }, [taskApiService, notifier]);
 
-  async function deleteTask(id) {
+  const deleteTask = useCallback(async (id) => {
     try {
       await taskApiService.remove(id);
       setTasks((prev) => prev.filter((t) => t.id !== id));
@@ -56,7 +56,7 @@ export function useTasks() {
     } catch {
       notifier.error('Failed to delete task');
     }
-  }
+  }, [taskApiService, notifier]);
 
   return { tasks, loading, loadError, createTask, completeTask, deleteTask, refresh: fetchTasks };
 }

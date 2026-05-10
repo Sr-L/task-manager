@@ -1,7 +1,8 @@
+import { memo } from 'react';
 import { TaskItem } from './TaskItem.jsx';
 import styles from './TaskList.module.css';
 
-export function TaskList({ tasks, loading, onComplete, onDelete }) {
+export const TaskList = memo(function TaskList({ tasks, loading, onComplete, onDelete }) {
   if (loading) {
     return (
       <ul className={styles.list} aria-busy="true">
@@ -28,4 +29,4 @@ export function TaskList({ tasks, loading, onComplete, onDelete }) {
       ))}
     </ul>
   );
-}
+});
