@@ -8,7 +8,6 @@ export function hasErrors(errors) {
   return Object.keys(errors).length > 0;
 }
 
-/** @param {object[]} tasks */
 export function sortByCreatedAt(tasks) {
   return [...tasks].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 }

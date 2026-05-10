@@ -32,12 +32,6 @@ export class MongoTaskRepository extends TaskRepository{
     return docs.map(toEntity);
   }
 
-  async findById(id) {
-    const doc = await TaskModel.findById(id);
-    if (!doc) return null;
-    return toEntity(doc);
-  }
-
   async markCompleted(id, userId) {
     const doc = await TaskModel.findOneAndUpdate(
       { _id: id, userId },

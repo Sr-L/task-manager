@@ -8,10 +8,6 @@ export class TaskRepository {
     throw new Error('TaskRepository.findByUserId not implemented');
   }
 
-  async findById(_id) {
-    throw new Error('TaskRepository.findById not implemented');
-  }
-
   async markCompleted(_id, _userId) {
     throw new Error('TaskRepository.markCompleted not implemented');
   }

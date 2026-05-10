@@ -8,7 +8,6 @@ describe('TaskRepository', () => {
   it.each([
     ['save', () => port.save({})],
     ['findByUserId', () => port.findByUserId('u1')],
-    ['findById', () => port.findById('1')],
     ['markCompleted', () => port.markCompleted('1', 'u1')],
     ['delete', () => port.delete('1', 'u1')],
   ])('%s throws Not implemented when not overridden', async (name, call) => {
@@ -24,7 +23,7 @@ describe('MongoTaskRepository', () => {
 
   it('overrides every abstract method (no method falls)', async () => {
     const adapter = new MongoTaskRepository();
-    const methods = ['save', 'findByUserId', 'findById', 'markCompleted', 'delete'];
+    const methods = ['save', 'findByUserId', 'markCompleted', 'delete'];
     for (const m of methods) {
       const own = Object.getPrototypeOf(adapter)[m];
       const fromPort = TaskRepository.prototype[m];
