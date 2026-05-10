@@ -19,8 +19,11 @@ export function TaskItem({ task, onComplete, onDelete }) {
           <p className={styles.itemDesc}>{task.description}</p>
         )}
         {task.responsible && (
-          <p className={styles.responsible}>
-            {task.responsible}
+          <p className={styles.responsible} aria-label={`Responsible: ${task.responsible}`}>
+            <span className={styles.avatar} aria-hidden="true">
+              {task.responsible.charAt(0).toUpperCase()}
+            </span>
+            <span>{task.responsible}</span>
           </p>
         )}
       </div>
