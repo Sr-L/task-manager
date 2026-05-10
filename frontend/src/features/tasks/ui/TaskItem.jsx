@@ -7,7 +7,9 @@ export const TaskItem = memo(function TaskItem({ task, onComplete, onDelete }) {
       <button
         className={styles.check}
         onClick={() => !task.completed && onComplete(task.id)}
-        aria-label={task.completed ? 'Completed' : 'Mark as complete'}
+        role="checkbox"
+        aria-checked={task.completed}
+        aria-label={`Mark task "${task.title}" as ${task.completed ? 'incomplete' : 'complete'}`}
         type="button"
         disabled={task.completed}
       >

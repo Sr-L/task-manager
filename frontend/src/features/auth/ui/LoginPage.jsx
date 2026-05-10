@@ -68,10 +68,13 @@ export function LoginPage() {
           {mode === "login" ? "Welcome back" : "Create account"}
         </h1>
 
-        <div className={styles.tabs}>
+        <div className={styles.tabs} role="tablist">
           <button
             className={`${styles.tab} ${mode === "login" ? styles.tabActive : ""}`}
             onClick={() => switchMode("login")}
+            role="tab"
+            aria-selected={mode === "login"}
+            aria-controls="login-form"
             type="button"
           >
             Sign in
@@ -79,6 +82,9 @@ export function LoginPage() {
           <button
             className={`${styles.tab} ${mode === "register" ? styles.tabActive : ""}`}
             onClick={() => switchMode("register")}
+            role="tab"
+            aria-selected={mode === "register"}
+            aria-controls="login-form"
             type="button"
           >
             Register
@@ -86,6 +92,7 @@ export function LoginPage() {
         </div>
 
         <form
+          id="login-form"
           className={`${styles.form} ${shake ? styles.shake : ""}`}
           onSubmit={handleSubmit}
           noValidate
@@ -123,7 +130,7 @@ export function LoginPage() {
             onBlur={handleBlur}
             error={visibleErrors.password}
             placeholder="••••••••"
-            autoComplete="current-password"
+            autoComplete={mode === "register" ? "new-password" : "current-password"}
           />
 
           {error && (
