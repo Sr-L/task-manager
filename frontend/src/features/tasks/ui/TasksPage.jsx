@@ -1,13 +1,17 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { useTasks } from '../application/useTasks.js';
 import {
   filterCompleted,
   filterPending,
   sortByCreatedAt,
 } from '../domain/taskDomain.js';
-import { TaskForm } from './TaskForm.jsx';
 import { TaskList } from './TaskList.jsx';
+import { Spinner } from '../../../shared/ui/components/Spinner.jsx';
 import styles from './TasksPage.module.css';
+
+const TaskForm = lazy(() =>
+  import('./TaskForm.jsx').then((m) => ({ default: m.TaskForm }))
+);
 
 export function TasksPage() {
   const { tasks, loading, error, createTask, completeTask, deleteTask } = useTasks();
@@ -50,7 +54,9 @@ export function TasksPage() {
 
       {showForm && (
         <div className={styles.formWrapper}>
-          <TaskForm onSubmit={handleCreate} />
+          <Suspense fallback={<Spinner size={20} label="Cargando formulario…" />}>
+            <TaskForm onSubmit={handleCreate} />
+          </Suspense>
         </div>
       )}
 
