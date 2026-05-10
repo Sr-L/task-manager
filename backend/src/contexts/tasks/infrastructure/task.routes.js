@@ -85,10 +85,8 @@ export function createTaskRouter(taskController, authMiddleware) {
    *         description: Task marked as completed
    *       401:
    *         description: Unauthorized
-   *       403:
-   *         description: Forbidden
    *       404:
-   *         description: Task not found
+   *         description: Task not found (also returned when the task belongs to another user, to avoid leaking resource existence)
    */
   router.patch('/:id/complete', taskIdParamValidators, validateRequest, taskController.complete);
 
@@ -111,10 +109,8 @@ export function createTaskRouter(taskController, authMiddleware) {
    *         description: Task deleted successfully
    *       401:
    *         description: Unauthorized
-   *       403:
-   *         description: Forbidden
    *       404:
-   *         description: Task not found
+   *         description: Task not found (also returned when the task belongs to another user, to avoid leaking resource existence)
    */
   router.delete('/:id', taskIdParamValidators, validateRequest, taskController.delete);
 
