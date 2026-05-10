@@ -1,9 +1,11 @@
 import { useAuthContext } from '../../context/AuthContext.jsx';
+import { useAuth } from '../../features/auth/application/useAuth.js';
 import { Button } from '../ui/components/Button.jsx';
 import styles from './Layout.module.css';
 
 export function Layout({ children }) {
-  const { user, logout } = useAuthContext();
+  const { user } = useAuthContext();
+  const { logout } = useAuth();
   return (
     <div className={styles.shell}>
       <header className={styles.header}>

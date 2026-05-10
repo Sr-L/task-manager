@@ -13,11 +13,11 @@ export function renderWithProviders(ui, { deps, initialEntries = ['/'], authValu
   function Wrapper({ children }) {
     return (
       <MemoryRouter initialEntries={initialEntries}>
-        <DependenciesProvider value={deps}>
-          <AuthProvider>
+        <AuthProvider>
+          <DependenciesProvider value={deps}>
             {authValue ? <AuthInjector value={authValue}>{children}</AuthInjector> : children}
-          </AuthProvider>
-        </DependenciesProvider>
+          </DependenciesProvider>
+        </AuthProvider>
       </MemoryRouter>
     );
   }

@@ -1,7 +1,8 @@
 import { Component } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './ErrorBoundary.module.css';
 
-export class ErrorBoundary extends Component {
+class ErrorBoundaryInner extends Component {
   constructor(props) {
     super(props);
     this.state = { hasError: false, error: null };
@@ -17,7 +18,7 @@ export class ErrorBoundary extends Component {
 
   handleReset = () => {
     this.setState({ hasError: false, error: null });
-    window.location.href = '/';
+    this.props.onReset?.();
   };
 
   render() {
@@ -36,4 +37,13 @@ export class ErrorBoundary extends Component {
     }
     return this.props.children;
   }
+}
+
+export function ErrorBoundary({ children }) {
+  const navigate = useNavigate();
+  return (
+    <ErrorBoundaryInner onReset={() => navigate('/', { replace: true })}>
+      {children}
+    </ErrorBoundaryInner>
+  );
 }

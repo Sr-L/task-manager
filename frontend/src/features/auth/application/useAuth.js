@@ -6,7 +6,7 @@ import { validateLoginForm, validateRegisterForm, hasErrors } from '../domain/au
 
 export function useAuth() {
   const { authApiService } = useDependencies();
-  const { login: saveAuth } = useAuthContext();
+  const { login: saveAuth, logout: clearAuth } = useAuthContext();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
@@ -52,5 +52,10 @@ export function useAuth() {
     }
   }
 
-  return { login, register, loading, error };
+  function logout() {
+    clearAuth();
+    navigate('/login', { replace: true });
+  }
+
+  return { login, register, logout, loading, error };
 }

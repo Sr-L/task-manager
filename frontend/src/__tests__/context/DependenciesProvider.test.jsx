@@ -1,9 +1,11 @@
 import { describe, it, expect, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import {
   DependenciesProvider,
   useDependencies,
 } from '../../context/DependenciesProvider.jsx';
+import { AuthProvider } from '../../context/AuthContext.jsx';
 
 describe('DependenciesProvider', () => {
   it('throws when useDependencies is called outside the provider', () => {
@@ -22,7 +24,11 @@ describe('DependenciesProvider', () => {
     };
 
     const wrapper = ({ children }) => (
-      <DependenciesProvider value={mocks}>{children}</DependenciesProvider>
+      <MemoryRouter>
+        <AuthProvider>
+          <DependenciesProvider value={mocks}>{children}</DependenciesProvider>
+        </AuthProvider>
+      </MemoryRouter>
     );
 
     const { result } = renderHook(() => useDependencies(), { wrapper });

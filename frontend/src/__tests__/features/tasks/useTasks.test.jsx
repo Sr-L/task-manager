@@ -11,9 +11,11 @@ function makeWrapper(taskApiService) {
   return function Wrapper({ children }) {
     return (
       <MemoryRouter>
-        <DependenciesProvider value={{ taskApiService, authApiService: {} }}>
-          <AuthProvider>{children}</AuthProvider>
-        </DependenciesProvider>
+        <AuthProvider>
+          <DependenciesProvider value={{ taskApiService, authApiService: {} }}>
+            {children}
+          </DependenciesProvider>
+        </AuthProvider>
       </MemoryRouter>
     );
   };

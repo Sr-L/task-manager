@@ -9,14 +9,14 @@ import './shared/ui/global.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <ErrorBoundary>
-      <BrowserRouter>
-        <DependenciesProvider>
-          <AuthProvider>
+    <BrowserRouter>
+      <ErrorBoundary>
+        <AuthProvider>
+          <DependenciesProvider>
             <App />
-          </AuthProvider>
-        </DependenciesProvider>
-      </BrowserRouter>
-    </ErrorBoundary>
+          </DependenciesProvider>
+        </AuthProvider>
+      </ErrorBoundary>
+    </BrowserRouter>
   </StrictMode>,
 );
