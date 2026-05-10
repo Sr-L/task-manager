@@ -3,16 +3,18 @@ import { renderHook, act, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { DependenciesProvider } from '../../../context/DependenciesProvider.jsx';
 import { AuthProvider } from '../../../context/AuthContext.jsx';
+import { createNoopNotifier } from '../../../shared/notifications/notifier.js';
 import { useTasks } from '../../../features/tasks/application/useTasks.js';
 
 const mockTask = { id: '1', title: 'Test task', description: '', responsible: '', completed: false, createdAt: new Date().toISOString() };
 
 function makeWrapper(taskApiService) {
+  const deps = { taskApiService, authApiService: {}, notifier: createNoopNotifier() };
   return function Wrapper({ children }) {
     return (
       <MemoryRouter>
         <AuthProvider>
-          <DependenciesProvider value={{ taskApiService, authApiService: {} }}>
+          <DependenciesProvider value={deps}>
             {children}
           </DependenciesProvider>
         </AuthProvider>

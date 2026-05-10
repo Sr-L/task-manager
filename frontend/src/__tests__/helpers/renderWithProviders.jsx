@@ -2,6 +2,7 @@ import { render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { DependenciesProvider } from '../../context/DependenciesProvider.jsx';
 import { AuthProvider } from '../../context/AuthContext.jsx';
+import { createNoopNotifier } from '../../shared/notifications/notifier.js';
 
 /**
  * Renders a component wrapped with all required providers.
@@ -9,12 +10,13 @@ import { AuthProvider } from '../../context/AuthContext.jsx';
  * @param {{ deps?: object, initialEntries?: string[], authValue?: object }} options
  */
 export function renderWithProviders(ui, { deps, initialEntries = ['/'], authValue } = {}) {
+  const resolvedDeps = deps ? { notifier: createNoopNotifier(), ...deps } : undefined;
   // Wrap AuthProvider so we can inject an auth state if needed
   function Wrapper({ children }) {
     return (
       <MemoryRouter initialEntries={initialEntries}>
         <AuthProvider>
-          <DependenciesProvider value={deps}>
+          <DependenciesProvider value={resolvedDeps}>
             {authValue ? <AuthInjector value={authValue}>{children}</AuthInjector> : children}
           </DependenciesProvider>
         </AuthProvider>

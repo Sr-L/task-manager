@@ -5,7 +5,7 @@ import { useDependencies } from '../../../context/DependenciesProvider.jsx';
 import { validateLoginForm, validateRegisterForm, hasErrors } from '../domain/authValidations.js';
 
 export function useAuth() {
-  const { authApiService } = useDependencies();
+  const { authApiService, notifier } = useDependencies();
   const { login: saveAuth, logout: clearAuth } = useAuthContext();
   const navigate = useNavigate();
 
@@ -22,6 +22,7 @@ export function useAuth() {
       const result = await authApiService.login(credentials);
       saveAuth(result);
       navigate('/');
+      notifier.success('Welcome back');
       return { success: true };
     } catch (err) {
       const msg = err.response?.data?.message ?? 'Login failed';

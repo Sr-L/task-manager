@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { createHttpClient } from '../shared/infrastructure/httpClient.js';
 import { createAuthApiService } from '../features/auth/infrastructure/AuthApiService.js';
 import { createTaskApiService } from '../features/tasks/infrastructure/TaskApiService.js';
+import { createSonnerNotifier } from '../shared/notifications/notifier.js';
 import { useAuthContext } from './AuthContext.jsx';
 
 const DependenciesContext = createContext(null);
@@ -13,6 +14,7 @@ function createDependencies(onUnauthorized) {
   return {
     authApiService: createAuthApiService(http),
     taskApiService: createTaskApiService(http),
+    notifier: createSonnerNotifier(),
   };
 }
 

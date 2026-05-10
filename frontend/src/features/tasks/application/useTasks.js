@@ -3,7 +3,7 @@ import { useDependencies } from '../../../context/DependenciesProvider.jsx';
 import { validateTaskForm, hasErrors } from '../domain/taskDomain.js';
 
 export function useTasks() {
-  const { taskApiService } = useDependencies();
+  const { taskApiService, notifier } = useDependencies();
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -30,6 +30,7 @@ export function useTasks() {
     try {
       const task = await taskApiService.create(formData);
       setTasks((prev) => [task, ...prev]);
+      notifier.success('Task created');
       return { success: true };
     } catch (err) {
       const msg = err.response?.data?.message ?? 'Failed to create task';
@@ -41,6 +42,7 @@ export function useTasks() {
     try {
       const updated = await taskApiService.complete(id);
       setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
+      notifier.success('Task completed');
     } catch {
       setError('Failed to update task');
     }
@@ -50,6 +52,7 @@ export function useTasks() {
     try {
       await taskApiService.remove(id);
       setTasks((prev) => prev.filter((t) => t.id !== id));
+      notifier.success('Task deleted');
     } catch {
       setError('Failed to delete task');
     }
