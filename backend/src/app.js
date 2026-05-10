@@ -46,7 +46,7 @@ export function createApp() {
 
   // Services
   const jwtService = new JwtService();
-  const passwordHasher = new BcryptPasswordHasher();
+  const passwordHasher = new BcryptPasswordHasher(parseInt(process.env.BCRYPT_ROUNDS || '12'));
 
   // Use cases
   const registerUseCase = new RegisterUserUseCase(userRepository, jwtService, passwordHasher);
