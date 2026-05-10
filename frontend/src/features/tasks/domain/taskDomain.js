@@ -1,7 +1,3 @@
-/**
- * Pure domain functions — no React, no side effects.1
- */
-
 export function validateTaskForm({ title }) {
   const errors = {};
   if (!title || title.trim().length === 0) errors.title = 'Title is required';

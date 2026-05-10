@@ -1,7 +1,3 @@
-/**
- * Pure domain functions — no React, no side effects.
- */
-
 export function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
