@@ -14,7 +14,7 @@ const LOGIN_FIELDS = ["email", "password"];
 const INITIAL_FORM = { name: "", email: "", password: "" };
 
 export function LoginPage() {
-  const { login, register, loading, error } = useAuth();
+  const { login, register, loading, error, clearError } = useAuth();
   const [mode, setMode] = useState("login"); // 'login' | 'register'
 
   const validate = mode === "login" ? validateLoginForm : validateRegisterForm;
@@ -54,6 +54,7 @@ export function LoginPage() {
   function switchMode(newMode) {
     setMode(newMode);
     reset();
+    clearError();
   }
 
   return (

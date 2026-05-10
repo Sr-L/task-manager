@@ -64,5 +64,9 @@ export function useAuth() {
     }
   }
 
-  return { login, register, logout, loading, error };
+  function clearError() {
+    setError(null);
+  }
+
+  return { login, register, logout, loading, error, clearError };
 }
