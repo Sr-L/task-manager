@@ -4,7 +4,7 @@ import { Toaster } from 'sonner';
 import { useAuthContext } from './context/AuthContext.jsx';
 import { PrivateRoute } from './shared/components/PrivateRoute.jsx';
 import { Layout } from './shared/components/Layout.jsx';
-import { Spinner } from './shared/ui/components/Spinner.jsx';
+import { RouteFallback } from './shared/components/RouteFallback.jsx';
 
 const LoginPage = lazy(() =>
   import('./features/auth/ui/LoginPage.jsx').then((m) => ({ default: m.LoginPage }))
@@ -12,21 +12,6 @@ const LoginPage = lazy(() =>
 const TasksPage = lazy(() =>
   import('./features/tasks/ui/TasksPage.jsx').then((m) => ({ default: m.TasksPage }))
 );
-
-function RouteFallback() {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '50vh',
-      }}
-    >
-      <Spinner size={24} label="Cargando…" />
-    </div>
-  );
-}
 
 export function App() {
   const { isAuthenticated } = useAuthContext();
