@@ -17,8 +17,8 @@ describe('authMiddleware', () => {
     middleware = createAuthMiddleware(jwtService);
   });
 
-  it('returns 401 when Authorization header is missing', () => {
-    const req = { headers: {} };
+  it('returns 401 when auth_token cookie is missing', () => {
+    const req = { cookies: {} };
     const res = buildRes();
     const next = jest.fn();
 
@@ -29,20 +29,9 @@ describe('authMiddleware', () => {
     expect(next).not.toHaveBeenCalled();
   });
 
-  it('returns 401 when Authorization header does not start with Bearer', () => {
-    const req = { headers: { authorization: 'Basic foo' } };
-    const res = buildRes();
-    const next = jest.fn();
-
-    middleware(req, res, next);
-
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(next).not.toHaveBeenCalled();
-  });
-
   it('returns 401 when token is invalid or expired', () => {
     jwtService.verifyToken.mockImplementation(() => { throw new Error('jwt expired'); });
-    const req = { headers: { authorization: 'Bearer bad-token' } };
+    const req = { cookies: { auth_token: 'bad-token' } };
     const res = buildRes();
     const next = jest.fn();
 
@@ -56,7 +45,7 @@ describe('authMiddleware', () => {
   it('attaches payload to req.user and calls next on valid token', () => {
     const payload = { id: 'u1', email: 'luis@test.com' };
     jwtService.verifyToken.mockReturnValue(payload);
-    const req = { headers: { authorization: 'Bearer good-token' } };
+    const req = { cookies: { auth_token: 'good-token' } };
     const res = buildRes();
     const next = jest.fn();
 

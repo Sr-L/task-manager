@@ -1,6 +1,7 @@
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import request from 'supertest';
 import express from 'express';
+import cookieParser from 'cookie-parser';
 import { AuthController } from '../../../src/contexts/auth/infrastructure/auth.controller.js';
 import { createAuthRouter } from '../../../src/contexts/auth/infrastructure/auth.routes.js';
 import { errorHandler } from '../../../src/shared/middlewares/error.handler.js';
@@ -8,6 +9,7 @@ import { errorHandler } from '../../../src/shared/middlewares/error.handler.js';
 function buildApp(controller) {
   const app = express();
   app.use(express.json());
+  app.use(cookieParser());
   app.use('/api/v1/auth', createAuthRouter(controller));
   app.use(errorHandler);
   return app;
@@ -25,7 +27,7 @@ describe('AuthController', () => {
   });
 
   describe('POST /api/v1/auth/register', () => {
-    it('returns 201 with { token, user } on success', async () => {
+    it('returns 201 with { user } and sets auth_token cookie', async () => {
       registerUseCase.execute.mockResolvedValue({
         token: 'jwt-token',
         user: { id: '1', name: 'Luis', email: 'luis@test.com' },
@@ -41,10 +43,12 @@ describe('AuthController', () => {
       expect(res.body).toEqual({
         success: true,
         data: {
-          token: 'jwt-token',
           user: { id: '1', name: 'Luis', email: 'luis@test.com' },
         },
       });
+      expect(res.headers['set-cookie']).toBeDefined();
+      expect(res.headers['set-cookie'][0]).toContain('auth_token=jwt-token');
+      expect(res.headers['set-cookie'][0]).toContain('HttpOnly');
     });
 
     it('passes name/email/password to the use case verbatim', async () => {
@@ -93,7 +97,7 @@ describe('AuthController', () => {
   });
 
   describe('POST /api/v1/auth/login', () => {
-    it('returns 200 with { token, user } on success', async () => {
+    it('returns 200 with { user } and sets auth_token cookie', async () => {
       loginUseCase.execute.mockResolvedValue({
         token: 'jwt-token',
         user: { id: '1', name: 'Luis', email: 'luis@test.com' },
@@ -108,10 +112,12 @@ describe('AuthController', () => {
       expect(res.body).toEqual({
         success: true,
         data: {
-          token: 'jwt-token',
           user: { id: '1', name: 'Luis', email: 'luis@test.com' },
         },
       });
+      expect(res.headers['set-cookie']).toBeDefined();
+      expect(res.headers['set-cookie'][0]).toContain('auth_token=jwt-token');
+      expect(res.headers['set-cookie'][0]).toContain('HttpOnly');
     });
 
     it('passes email/password to the use case verbatim', async () => {

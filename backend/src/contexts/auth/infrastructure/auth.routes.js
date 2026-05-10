@@ -81,5 +81,17 @@ export function createAuthRouter(authController) {
     authController.login
   );
 
+  /**
+   * @swagger
+   * /auth/logout:
+   *   post:
+   *     summary: Logout and clear auth cookie
+   *     tags: [Auth]
+   *     responses:
+   *       200:
+   *         description: Logged out successfully
+   */
+  router.post('/logout', authController.logout);
+
   return router;
 }

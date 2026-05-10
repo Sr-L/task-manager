@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from '../docs/swagger.js';
 
@@ -24,8 +25,12 @@ import { errorHandler } from './shared/middlewares/error.handler.js';
 export function createApp() {
   const app = express();
 
-  app.use(cors());
+  app.use(cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    credentials: true,
+  }));
   app.use(express.json());
+  app.use(cookieParser());
 
   // Swagger UI
   app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

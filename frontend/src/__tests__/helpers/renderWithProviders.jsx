@@ -34,7 +34,7 @@ import { useAuthContext } from '../../context/AuthContext.jsx';
 function AuthInjector({ value, children }) {
   const { login } = useAuthContext();
   useEffect(() => {
-    if (value?.token) login(value);
+    if (value?.user) login(value);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return children;

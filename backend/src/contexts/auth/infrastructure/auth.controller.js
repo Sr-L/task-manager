@@ -10,7 +10,13 @@ export class AuthController {
     try {
       const { name, email, password } = req.body;
       const { token, user } = await this.registerUseCase.execute({ name, email, password });
-      successResponse(res, { token, user }, 201);
+      res.cookie('auth_token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+      successResponse(res, { user }, 201);
     } catch (err) {
       next(err);
     }
@@ -20,9 +26,24 @@ export class AuthController {
     try {
       const { email, password } = req.body;
       const { token, user } = await this.loginUseCase.execute({ email, password });
-      successResponse(res, { token, user });
+      res.cookie('auth_token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+      successResponse(res, { user });
     } catch (err) {
       next(err);
     }
+  };
+
+  logout = (_req, res) => {
+    res.clearCookie('auth_token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+    });
+    successResponse(res, { message: 'Logged out' });
   };
 }

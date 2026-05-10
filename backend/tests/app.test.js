@@ -71,10 +71,10 @@ describe('createApp (wiring smoke tests)', () => {
   it('responds to a CORS preflight with access-control-allow-origin', async () => {
     const res = await request(app)
       .options('/api/v1/auth/login')
-      .set('Origin', 'http://example.com')
+      .set('Origin', 'http://localhost:5173')
       .set('Access-Control-Request-Method', 'POST');
 
     expect(res.status).toBe(204);
-    expect(res.headers['access-control-allow-origin']).toBe('*');
+    expect(res.headers['access-control-allow-origin']).toBe('http://localhost:5173');
   });
 });

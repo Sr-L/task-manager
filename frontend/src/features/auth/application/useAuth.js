@@ -53,9 +53,15 @@ export function useAuth() {
     }
   }
 
-  function logout() {
-    clearAuth();
-    navigate('/login', { replace: true });
+  async function logout() {
+    try {
+      await authApiService.logout?.();
+    } catch {
+      // Cookie cleared server-side, continue logout
+    } finally {
+      clearAuth();
+      navigate('/login', { replace: true });
+    }
   }
 
   return { login, register, logout, loading, error };
