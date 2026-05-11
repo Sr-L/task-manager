@@ -27,9 +27,9 @@ class ErrorBoundaryInner extends Component {
         <div className={styles.page}>
           <div className={styles.card}>
             <span className={styles.icon}>⚠</span>
-            <h1 className={styles.title}>Algo ha ido mal</h1>
+            <h1 className={styles.title}>Something went wrong</h1>
             <button className={styles.btn} onClick={this.handleReset}>
-              Volver al inicio
+              Go to HomePage
             </button>
           </div>
         </div>

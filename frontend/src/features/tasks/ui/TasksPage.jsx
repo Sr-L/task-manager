@@ -55,7 +55,7 @@ export function TasksPage() {
 
       {showForm && (
         <div className={styles.formWrapper}>
-          <Suspense fallback={<Spinner size={20} label="Cargando formulario…" />}>
+          <Suspense fallback={<Spinner size={20} label="Loading form…" />}>
             <TaskForm onSubmit={handleCreate} />
           </Suspense>
         </div>

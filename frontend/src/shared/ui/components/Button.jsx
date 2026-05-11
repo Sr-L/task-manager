@@ -10,7 +10,7 @@ export function Button({ variant = 'primary', loading, children, className = '',
       aria-busy={loading}
       {...props}
     >
-      {loading ? <Spinner size={14} label="Cargando…" /> : children}
+      {loading ? <Spinner size={14} label="Loading…" /> : children}
     </button>
   );
 }

@@ -4,7 +4,7 @@ import styles from './RouteFallback.module.css';
 export function RouteFallback() {
   return (
     <div className={styles.fallback}>
-      <Spinner size={24} label="Cargando…" />
+      <Spinner size={24} label="Loading…" />
     </div>
   );
 }
