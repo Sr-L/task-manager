@@ -29,6 +29,15 @@ export function createAuthRouter(authController) {
    *     responses:
    *       201:
    *         description: User registered successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 token:
+   *                   type: string
+   *                 user:
+   *                   $ref: '#/components/schemas/User'
    *       409:
    *         description: Email already in use
    *       422:
@@ -66,6 +75,15 @@ export function createAuthRouter(authController) {
    *     responses:
    *       200:
    *         description: Login successful, returns JWT
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 token:
+   *                   type: string
+   *                 user:
+   *                   $ref: '#/components/schemas/User'
    *       401:
    *         description: Invalid credentials
    *       422:
