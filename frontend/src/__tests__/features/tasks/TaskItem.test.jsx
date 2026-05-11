@@ -34,7 +34,7 @@ describe('TaskItem', () => {
     const user = userEvent.setup();
     const { onComplete } = renderItem();
 
-    await user.click(screen.getByRole('button', { name: /mark as complete/i }));
+    await user.click(screen.getByRole('checkbox', { name: /mark.*as complete/i }));
 
     expect(onComplete).toHaveBeenCalledWith('1');
   });
@@ -51,7 +51,7 @@ describe('TaskItem', () => {
   it('marks the row as done when task.completed is true', () => {
     renderItem({ completed: true });
 
-    const checkBtn = screen.getByRole('button', { name: /completed/i });
+    const checkBtn = screen.getByRole('checkbox', { name: /incomplete/i });
     expect(checkBtn).toBeDisabled();
 
     // The "done" visual state is applied via the itemDone CSS module class
@@ -65,7 +65,7 @@ describe('TaskItem', () => {
     const user = userEvent.setup();
     const { onComplete } = renderItem({ completed: true });
 
-    await user.click(screen.getByRole('button', { name: /completed/i }));
+    await user.click(screen.getByRole('checkbox', { name: /incomplete/i }));
 
     expect(onComplete).not.toHaveBeenCalled();
   });

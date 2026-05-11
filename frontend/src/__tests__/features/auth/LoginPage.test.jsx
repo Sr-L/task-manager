@@ -4,8 +4,8 @@ import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../helpers/renderWithProviders.jsx';
 import { LoginPage } from '../../../features/auth/ui/LoginPage.jsx';
 
-// The submit button is index [1]; index [0] is the "Sign in" tab
-const getSubmit = () => screen.getAllByRole('button', { name: /sign in/i })[1];
+// The submit button matches role="button" with name "Sign in →"
+const getSubmit = () => screen.getByRole('button', { name: /sign in/i });
 
 function makeDeps(authOverrides = {}) {
   return {
@@ -33,7 +33,8 @@ describe('LoginPage', () => {
     renderWithProviders(<LoginPage />, { deps: makeDeps(), initialEntries: ['/login'] });
     await user.click(getSubmit());
     await waitFor(() => {
-      expect(screen.getByText(/valid email/i)).toBeInTheDocument();
+      const alerts = screen.getAllByRole('alert');
+      expect(alerts.some(a => /valid email/i.test(a.textContent))).toBe(true);
     });
   });
 
@@ -64,13 +65,13 @@ describe('LoginPage', () => {
     await user.click(getSubmit());
 
     await waitFor(() => {
-      expect(screen.getByText(/invalid credentials/i)).toBeInTheDocument();
+      expect(screen.getByRole('alert')).toHaveTextContent(/invalid credentials/i);
     });
   });
 
   it('switches to register form when clicking Register tab', async () => {
     renderWithProviders(<LoginPage />, { deps: makeDeps(), initialEntries: ['/login'] });
-    await user.click(screen.getByRole('button', { name: /register/i }));
+    await user.click(screen.getByRole('tab', { name: /register/i }));
     expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /create account/i })).toBeInTheDocument();
   });

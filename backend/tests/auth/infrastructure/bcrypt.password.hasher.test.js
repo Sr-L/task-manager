@@ -2,7 +2,6 @@ import { describe, it, expect } from '@jest/globals';
 import { BcryptPasswordHasher } from '../../../src/contexts/auth/infrastructure/bcrypt.password.hasher.js';
 
 describe('BcryptPasswordHasher', () => {
-  // Lower rounds for speed; cost is verified separately below.
   const hasher = new BcryptPasswordHasher(4);
 
   it('hashes a plain password to a bcrypt-formatted string', async () => {
@@ -39,10 +38,10 @@ describe('BcryptPasswordHasher', () => {
     expect(hash).toMatch(/^\$2[aby]\$04\$/);
   });
 
-  it('defaults to 10 rounds when no cost is provided', async () => {
+  it('defaults to 12 rounds when no cost is provided', async () => {
     const def = new BcryptPasswordHasher();
     const hash = await def.hash('secret123');
 
-    expect(hash).toMatch(/^\$2[aby]\$10\$/);
+    expect(hash).toMatch(/^\$2[aby]\$12\$/);
   });
 });

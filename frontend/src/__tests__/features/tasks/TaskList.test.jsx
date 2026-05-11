@@ -37,7 +37,7 @@ describe('TaskList', () => {
     const onComplete = vi.fn();
     const user = userEvent.setup();
     render(<TaskList tasks={tasks} loading={false} onComplete={onComplete} onDelete={vi.fn()} />);
-    const completeBtn = screen.getByRole('button', { name: /mark as complete/i });
+    const completeBtn = screen.getByRole('checkbox', { name: /mark.*as complete/i });
     await user.click(completeBtn);
     expect(onComplete).toHaveBeenCalledWith('1');
   });
@@ -45,7 +45,7 @@ describe('TaskList', () => {
   it('does not call onComplete for already completed tasks (button disabled)', async () => {
     const onComplete = vi.fn();
     render(<TaskList tasks={tasks} loading={false} onComplete={onComplete} onDelete={vi.fn()} />);
-    const completedBtn = screen.getByRole('button', { name: /completed/i });
+    const completedBtn = screen.getByRole('checkbox', { name: /incomplete/i });
     expect(completedBtn).toBeDisabled();
   });
 
