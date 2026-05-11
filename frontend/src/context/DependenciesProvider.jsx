@@ -9,8 +9,7 @@ import { useAuthContext } from './AuthContext.jsx';
 const DependenciesContext = createContext(null);
 
 function createDependencies(onUnauthorized) {
-  const getToken = () => localStorage.getItem('tm_token');
-  const http = createHttpClient(getToken, onUnauthorized);
+  const http = createHttpClient(onUnauthorized);
   return {
     authApiService: createAuthApiService(http),
     taskApiService: createTaskApiService(http),

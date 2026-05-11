@@ -4,16 +4,12 @@ const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3001/api/v1';
 
 /**
  * Creates an Axios instance pre-configured for the backend.
- * @param {() => string | null} getToken - function that returns the current JWT
  * @param {() => void} [onUnauthorized] - invoked on any 401 response
  */
-export function createHttpClient(getToken, onUnauthorized) {
-  const client = axios.create({ baseURL: BASE_URL });
-
-  client.interceptors.request.use((config) => {
-    const token = getToken();
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
+export function createHttpClient(onUnauthorized) {
+  const client = axios.create({
+    baseURL: BASE_URL,
+    withCredentials: true,
   });
 
   client.interceptors.response.use(

@@ -7,35 +7,20 @@ import { createHttpClient } from '../../shared/infrastructure/httpClient.js';
  * That lets us drive the handlers directly without standing up a real
  * network round-trip.
  */
-function getRequestHandler(client) {
-  return client.interceptors.request.handlers[0].fulfilled;
-}
 function getResponseHandlers(client) {
   return client.interceptors.response.handlers[0];
 }
 
 describe('createHttpClient', () => {
-  it('adds Authorization: Bearer <token> when a token is available', () => {
-    const client = createHttpClient(() => 'abc.def.ghi');
-    const onRequest = getRequestHandler(client);
+  it('enables credentials for cookie-based authentication', () => {
+    const client = createHttpClient();
 
-    const config = onRequest({ headers: {} });
-
-    expect(config.headers.Authorization).toBe('Bearer abc.def.ghi');
-  });
-
-  it('does not set Authorization when getToken() returns null', () => {
-    const client = createHttpClient(() => null);
-    const onRequest = getRequestHandler(client);
-
-    const config = onRequest({ headers: {} });
-
-    expect(config.headers.Authorization).toBeUndefined();
+    expect(client.defaults.withCredentials).toBe(true);
   });
 
   it('invokes onUnauthorized on 401 responses and rejects the original error', async () => {
     const onUnauthorized = vi.fn();
-    const client = createHttpClient(() => 'tok', onUnauthorized);
+    const client = createHttpClient(onUnauthorized);
     const { rejected } = getResponseHandlers(client);
     const error = { response: { status: 401, data: { message: 'expired' } } };
 
@@ -45,7 +30,7 @@ describe('createHttpClient', () => {
 
   it('does not invoke onUnauthorized on non-401 responses', async () => {
     const onUnauthorized = vi.fn();
-    const client = createHttpClient(() => 'tok', onUnauthorized);
+    const client = createHttpClient(onUnauthorized);
     const { rejected } = getResponseHandlers(client);
     const error = { response: { status: 500 } };
 
@@ -54,7 +39,7 @@ describe('createHttpClient', () => {
   });
 
   it('unwraps { success, data } payloads on successful responses', () => {
-    const client = createHttpClient(() => null);
+    const client = createHttpClient();
     const { fulfilled } = getResponseHandlers(client);
 
     const response = { data: { success: true, data: { id: '1' } } };
