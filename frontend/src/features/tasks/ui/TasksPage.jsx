@@ -14,7 +14,7 @@ const TaskForm = lazy(() =>
 );
 
 export function TasksPage() {
-  const { tasks, loading, loadError, createTask, completeTask, deleteTask } = useTasks();
+  const { tasks, loading, loadError, createTask, completeTask, deleteTask, refresh } = useTasks();
   const [showForm, setShowForm] = useState(false);
   const [filter, setFilter] = useState('all'); // 'all' | 'pending' | 'done'
 
@@ -75,7 +75,14 @@ export function TasksPage() {
         ))}
       </div>
 
-      {loadError && <p className={styles.error} role="alert">{loadError}</p>}
+      {loadError && (
+        <div className={styles.errorContainer} role="alert">
+          <p className={styles.error}>{loadError}</p>
+          <button className={styles.retryBtn} onClick={refresh} type="button">
+            Retry
+          </button>
+        </div>
+      )}
 
       <TaskList
         tasks={filtered}

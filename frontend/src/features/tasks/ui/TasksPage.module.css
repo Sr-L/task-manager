@@ -71,14 +71,40 @@
   color: var(--color-accent);
 }
 
-.error {
-  color: var(--color-danger);
-  font-size: 13px;
+.errorContainer {
   margin-bottom: 16px;
   padding: 10px 14px;
   background: rgba(255, 77, 109, 0.08);
   border-radius: var(--radius);
   border: 1px solid rgba(255, 77, 109, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.error {
+  color: var(--color-danger);
+  font-size: 13px;
+  margin: 0;
+  flex: 1;
+}
+
+.retryBtn {
+  padding: 6px 14px;
+  background: var(--color-danger);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity var(--transition);
+}
+
+.retryBtn:hover {
+  opacity: 0.9;
 }
 
 @media (max-width: 600px) {
